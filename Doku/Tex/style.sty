@@ -1,0 +1,72 @@
+\ProvidesPackage{style}
+
+\usepackage[ngerman]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{color}
+\usepackage[hidelinks, unicode]{hyperref}                    % Hyperlinks (z.B. Inhaltsverzeichnis)
+
+\usepackage[a4paper, lmargin={2.5cm}, rmargin={2.5cm}, tmargin={2.5cm}, bmargin={2.5cm}]
+    {geometry}
+\usepackage{microtype}                              % Verbessert Behandlung von Zeilenumbrüchen (overfull, ...)
+\usepackage{enumitem}                               % Layoutänderungen von itemize-Aufzählungen
+\usepackage{graphicx}                               % Bilder
+\usepackage{wrapfig}
+\RequirePackage[export]{adjustbox}                  % Positionierung von Bildern
+
+\usepackage{tabularx}                               % Tabellen
+\usepackage{tabulary}                               % Tabellen
+\usepackage{longtable}                              % Tabellen
+\usepackage{array}                                  % Tabellen mit Spaltenformaten
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\usepackage{booktabs}                               % Tabellen mit hübschen Linien
+\usepackage{multirow}                               % Tabellenzeile über mehrere Zeilen
+\usepackage{makecell}                               % Tabellen-Überschriften
+\renewcommand\theadfont{\bfseries}
+
+\usepackage{listings}
+\usepackage{multirow}                               % Tabellenzeile über mehrere Zeilen
+\usepackage{float}                                  % Exakte Platzierung von Objekten mit H-Modifier
+\usepackage{textcomp}                               % Verhindert "not defining ..."-Warnungen durch gensymb
+\usepackage{gensymb}                                % Sonderzeichen, wie °
+% \usepackage{amssymb}                              % Mathe
+% \usepackage{amsthm}                               % Mathe
+\usepackage[style=numeric, sorting=none, doi=false, isbn=false]{biblatex}    % Zitieren
+\usepackage{csquotes}                               % Empfohlen bei Verwendung von biblatex
+\usepackage[acronym, toc, nopostdot, nonumberlist]
+    {glossaries-extra}                                    % Abkürzungsverzeichnis
+
+\usepackage[nottoc]{tocbibind}                      % Abbildungs-, Tabellen- und Literaturverzeichnis im Inhaltsverzeichnis
+
+\usepackage[obeyFinal, textsize=10pt]{todonotes}    % Todo-Notizen
+
+\usepackage{lscape}
+\usepackage[font=small,labelfont=bf]{caption}
+
+
+% Font
+\usepackage[defaultsans,scale=0.95]{opensans}
+\renewcommand{\familydefault}{\sfdefault}
+\linespread{1.5}
+
+% Paragraphen
+\setlength{\parindent}{0cm} % Einrückung bei Paragraphenbeginn entfernen
+\setlength{\parskip}{.8em}  % Abstand zwischen Paragraphen
+
+
+\setlength{\marginparwidth}{2cm} % Platz für Kommentare am Rand
+
+\graphicspath{{img/}} % Pfad, der Bilder enthält
+
+% Stil für Abkprzungsverzeichnis (bzw. glossaries allgemein)
+%\setglossarystyle{alttree}
+
+%%%%%%%%%%%%% Eigene Spaltendefinitionen für Tabellen %%%%%%%%%%%%%
+
+% Spalte mit definierbarer Breite und linksbündig, z.B. L{5cm}
+%\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+% Horizontal und vertikal zentrierter Inhalt mit definierbarer Breite, z.B. C{5cm}
+%\newcolumntype{C}[1]{>{\centering\arraybackslash}m{#1}}

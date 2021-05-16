@@ -1,0 +1,118 @@
+\documentclass[12pt,final]{report}
+
+\usepackage{style}
+\usepackage{dhbwTitlepage}
+\usepackage{xcolor}
+\usepackage{color}
+\usepackage{svg}
+\usepackage{seqsplit}
+\usepackage{rotating}
+\usepackage{listingsutf8}
+\usepackage{fancyhdr}
+\usepackage{appendix}
+\usepackage{censor}
+\usepackage{tipa}
+\usepackage[acronym]{glossaries}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.03,0.6,0.18}
+\definecolor{lgray}{rgb}{0.2,0.2,0.2}
+\definecolor{lorange}{rgb}{1,0.7,0.37}
+\definecolor{purple}{rgb}{0.8,0.4,1}
+
+\makenoidxglossaries
+
+\lstset{frame=tb,
+  language=C++,
+  aboveskip=7mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle=\linespread{0.9}\small\ttfamily,
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  identifierstyle=\color{lgray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3,
+}
+
+% Rechtschreibprüfung
+% Kommandozeile für die Rechtschreibprüfung dafür: lualatex '\def\spelling{}\input{Arbeit}'
+\ifdef{\spelling}{
+    \usepackage{spelling}
+    \usepackage{microtype}
+    \DisableLigatures{encoding = *, family = *}
+}
+
+% Zensieren
+% Kommandozeile für eine unzensierte Version: lualatex '\def\uncensored{}\input{Arbeit}'
+\ifdef{\uncensored}{
+    \StopCensoring
+}
+
+\def\censorruleheight{0.1ex}
+\def\censorruledepth{0.5ex}
+
+
+% "Metadaten"
+\title{\Large{Die Vermessung des Körpers mit dem Zozo-Suit}}
+\project{Studienarbeit}
+\author{Christoph Böhringer, Tobias Krämer}
+\supervisor{}
+\studentNumber{3275565, }
+\class{TINF18IN}
+\company{}
+\date{21.06.2021}
+
+% Initialisierungen für Abkürzungsverzeichnis
+\loadglsentries{Acronyms.tex}
+%\makeglossaries
+\setglossarystyle{altlist}
+\addbibresource{literature.bib}
+
+% Formatierung der Kopfzeile
+\fancyhf{}                              % Standarddefinitionen der Kopfzeile löschen
+\fancyfoot[C]{\thepage}                 % Seitenzahl in der Mitte der Fußzeile angeben
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\fancypagestyle{plain}{
+    \fancyfoot[C]{\thepage}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\begin{document}
+\pagenumbering{Roman}
+\maketitle                                  % Titelblatt
+% \include{tex/Sperrvermerk}                % Sperrvermerk
+\include{tex/Erklaerung/Erklaerung}         % Erklärung
+\include{tex/Abstract/Abstract}             % Abstract
+\tableofcontents                            % Inhaltsverzeichnis
+\listoffigures                              % Abbildungsverzeichnis
+\listoftables                               % Tabellenverzeichnis
+\printnoidxglossary[
+  type=\acronymtype,
+  title={Abkürzungen},
+  nogroupskip]           % Akronyme
+\printnoidxglossary                         % Glossar
+%\printacronyms
+%\printglossary[
+%  type=\acronymtype,
+%  title={Abkürzungen},
+%  nogroupskip
+%]                                           % Abkürzungsverzeichnis
+%\printglossary[type=main]                   % Abkürzungsverzeichnis
+\clearpage
+\pagenumbering{arabic}
+\pagestyle{fancy}
+\include{tex/Einleitung/Einleitung}             % Einleitung
+\include{tex/Requirements/Requirements}
+\include{tex/Zusammenfassung_Ausblick/Zusammenfassung}   % Zusammenfassung
+\include{tex/Anhang/Anhang}                     % Anhang
+
+\printbibliography                          % Literaturverzeichnis
+\end{document}

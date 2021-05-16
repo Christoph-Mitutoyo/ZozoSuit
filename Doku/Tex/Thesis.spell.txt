@@ -1,0 +1,379 @@
+
+Evaluierung von Tools zu mAuffinden von Undefined Behavior T3000 des
+Studiengangs Informatik an der Dualen Hochschule BadenWürttemberg
+Stuttgart von Christoph Böhringer 21.06.2021 Matrikelnummer, Kurs:
+3275565, TINF18IN Ausbildungsfirma: Mitutoyo CTL Germany GmbH Betreuer:
+Dipl.Inform. (FH) Thomas Weller
+
+Erklärung Ich versichere hiermit, dass ich meine Thesis mit dem Thema
+Evaluierung von Tools zum Auffinden von Undefined Behavior 
+selbstständig verfasst und keine anderen als die angegebenen Quellen und
+Hilfsmittel benutzt habe. Ich versichere zudem, dass die eingereichte
+elektronische Fassung mit der gedruckten Fassung übereinstimmt. Falls
+gleichwertige Entscheidungen getroffen werden mussten, wurden diese von
+mir entschieden, außer es ist anders angegeben. Ort, Datum Unterschrift
+I
+
+Abstract In einem Softwareprodukt trat bei der Umstellung von 32 Bit auf
+64 Bit ein Fehler auf, dessen Ursache sich vermutlich auf Undefined
+Behavior von C++ zurückführen lässt. Diese Arbeit soll den Nachweis
+erbringen oder widerlegen, dass Undefined Behavior die Ursache für den
+Fehler war. Optional kann eine mögliche Erklärung gesucht werden, warum
+der betroffene Code in der 32 Bit Version keinen Fehler verursacht hat.
+Das betroffene Projekt wurde vor der Umstellung mehrere Jahre lang nicht
+verändert. Es muss daher davon ausgegangen werden, dass sich ähnliche
+Fehler damals auch an anderen Stellen eingeschlichen haben, jedoch noch
+nicht bemerkt wurden. Die Arbeit soll untersuchen, ob weitere Fehler vom
+Typ Undefined Behavior in diesem Projekt vorliegen. Um Fehler dieser Art
+auch in anderen Projekten auszuschließen, sollen Tools gesucht und
+evaluiert werden, mit denen die Fehler automatisiert gefunden und
+berichtet werden können. Falls kein passendes Tool existiert, soll
+aufgezeigt werden, mit welchem manuellen Vorgehen solche Stellen erkannt
+werden können. Die Tools sollen möglichst mit den bestehenden
+Entwicklungsumgebungen verwendet werden können und idealerweise alle
+Arten von Undefined Behavior erkennen. Hinweis: Da in der Arbeit
+vermutlich Source Code der Mitutoyo CTL Germany GmbH offengelegt wird,
+ist die Arbeit unter Verschluss zu halten. II
+
+Inhaltsverzeichnis Abstract II Abbildungsverzeichnis IV
+Tabellenverzeichnis V 1 Anhang 1 1.1 WinDbg Crash Analyse 1 1.1.1
+Grundlegende Prüfungen 1 1.1.2 Symbole 2 1.1.3 Exception Analyse 5 1.1.4
+Extraktion von Daten für einen Unit Test 7 1.1.5 Unit Test 10 1.1.6
+Mögliche Herkunft von NaN 11 1.2 Build Instructions 13 1.2.1 WinDbg
+Crash Analyse 13 1.2.2 Kompilieren von Mitutoyo.MCOSMOS.BasicLibs 14 III
+
+Abbildungsverzeichnis 1.1 Hier den Eintrag ändern 14 IV
+
+Tabellenverzeichnis V
+
+Kapitel 1 Anhang 1.1 WinDbg Crash Analyse Vom betroffenen Absturz, der
+womöglich auf Undefined Behavior zurückzuführen ist, wurde ein Crash
+Dump erstellt. Dieser Anhang beschreibt anhand einer aufgezeichneten
+Logdatei, welche Befehle genutzt wurden, um den Crash Dump zu
+analysieren. Bei der analysierten Datei handelt es sich um einen Crash
+Dump mit vollständig enthaltenem Speicherinhalt. Die Datei ist ca. 1 GB
+groß. Die hier beschriebene Analyse wurde von Mitarbeitern des CTL
+durchgeführt und für die Studienarbeit zur Verfügung gestellt. 1.1.1
+Grundlegende Prüfungen 0:000> || . 0 Full memory user mini dump: D: \
+MINIDUMP 2 0201217 15 0359.DMP Dem Dateinamen nach wurde der Crash Dump
+am 17.12.2020 um 15:03:59 Uhr UTC geschrieben. Die Zeitangabe innerhalb
+des Crash Dumps bestätigt dies. 1
+
+0:000> .time Debug session time: Thu Dec 17 16 :04:00.000 2 020 ( UTC +
+1 :00 ) System Uptime: 0 days 7 :25:08.968 Process Uptime: 0 days
+0:01:31.000 Kernel time: 0 days 0:00:32.000 User time: 0 days
+0:00:48.000 Der Bug wurde am 27.11.2020 berichtet und am 11.12.2020
+erstmals bestätigt. Beim vorliegenden Crash Dump handelt es sich also um
+die Reproduktion des Fehlers zu einem späteren Zeitpunkt. 0:000> | . 0
+id: 2 b7c examine name: C: \ MCOSMOSx64 \ EXE \ GEOPAK64.exe Das
+ausgeführte Programm stimmt mit dem des Fehlerberichts überein. 0:000>
+.exr 1 *** WARNING: Unable to verify checksum for MnGeom364.dll
+ExceptionAddress: 00007ff995c1d48e (
+MnGeom364!tg_ajc_lin_int+0x000000000000014e ) ExceptionCode: c0000005 (
+Access violation ) ExceptionFlags: 00000000 NumberParameters: 2
+Parameter [ 0 ] : 0000000000000000 Parameter [1] : 0000000000000000
+Attempt to read from address 0000000000000000 Der Fehlercode und das
+fehlerhafte Modul stimmen ebenfalls mit dem des Fehlerberichts überein.
+Es kann also eine detailliertere Analyse durchgeführt werden. 1.1.2
+Symbole Für eine weitere Analyse ist das Vorhandensein von Symbolen
+erforderlich. Manche Symbole wurden zusammen mit dem Crash Dump
+abgelegt. Diese Symbole sollten zuerst berücksichtigt werden und müssen
+zuerst in den Symbolpath aufgenommen 2
+
+werden. 0:000> .sympath " D: \ temp \ Bug 32147 " Symbol search path is:
+D: \ temp \ Bug 32147 Expanded Symbol search path is: d: \ temp \ bug
+32147 ************* Path validation summary ************** Response Time
+( ms ) Location OK D: \ temp \ Bug 32147 Leider stimmen bei den Symbolen
+die Zeitstempel nicht überein, so dass die Symbole nicht geladen werden
+können. Die Prüfung des Zeitstempels kann jedoch ausgeschaltet werden.
+0:000> .symopt+ 0x40 Symbol options are 0x30377: 0x00000001 -
+SYMOPT_CASE_INSENSITIVE 0x00000002 - SYMOPT_UNDNAME 0x00000004 -
+SYMOPT_DEFERRED_LOADS 0x00000010 - SYMOPT_LOAD_LINES 0x00000020 -
+SYMOPT_OMAP_FIND_NEAREST 0x00000040 - SYMOPT_LOAD_ANYTHING 0x00000100 -
+SYMOPT_NO_UNQUALIFIED_LOADS 0x00000200 - SYMOPT_FAIL_CRITICAL_ERRORS
+0x00010000 - SYMOPT_AUTO_PUBLICS 0x00020000 - SYMOPT_NO_IMAGE_SEARCH
+Weitere Symbole können vom Azure DevOps Server geladen werden 0:000>
+.sympath+ srv * d: \ debug \ symbols *\\ tfs - build 2 014 \ SymbolStore
+\ Mitutoyo.MCOSMOS.BasicLibs_Release_NuGet Symbol search path is: D: \
+temp \ Bug 32147; srv * d: \ debug \ symbols *\\ tfs - build 2 014 \
+SymbolStore \ Mitutoyo.MCOSMOS.BasicLibs_Release_NuGet Expanded Symbol
+search path is: d: \ temp \ bug 32147; srv * d: \ debug \ symbols *\\
+tfs - build 2 014 \ symbolstore \
+mitutoyo.mcosmos.basiclibs_release_nuget ************* Path validation
+summary ************** Response Time ( ms ) Location OK D: \ temp \ Bug
+32147 Deferred srv * d: \ debug \ symbols *\\ tfs - build 2 014 \
+SymbolStore \ Mitutoyo.MCOSMOS.BasicLibs_Release_NuGet Und letztlich
+muss der Microsoft Server abgefragt werden, damit die Funktionen des
+Betriebssystems korrekt aufgelöst werden können. 3
+
+0:000> .symfix+ d: \ debug \ symbols Nach dem Ändern der möglichen
+Quellen für Symbole muss dem Debugger mitgeteilt werden, dass er seine
+Informationen aktualisiert. 0:000> .reload / f . *** WARNING: Unable to
+verify checksum for GEOPAK64.exe ....... *** WARNING: Unable to verify
+checksum for GeoWinBinToAsc64.dll ..... *** WARNING: Unable to verify
+checksum for Mafis_3DCmp64.dll ....... *** WARNING: Unable to verify
+checksum for MnGeoWnListCtrl64.dll . *** WARNING: Unable to verify
+checksum for MnRecordPoints64.dll . *** WARNING: Unable to verify
+checksum for UncertaintyCalculator64.dll .. Press ctrl - c ( cdb, kd,
+ntsd ) or ctrl - break ( windbg ) to abort symbol loads that take too
+long. Run !sym noisy before .reload to track down problems loading
+symbols. [ ... ] Loading unloaded module list ..........................
+************* Symbol Loading Error Summary ************** Module name
+Error WkWin64 The system cannot find the file specified GeoWinBinToAsc64
+The system cannot find the file specified [ ... ] You can troubleshoot
+most symbol related issues by turning on symbol loading diagnostics (
+!sym noisy ) and repeating the command that caused symbols to be loaded.
+You should also verify that your symbol search path ( .sympath ) is
+correct. Anhand der beiden bekannten und für die Fehleranalyse
+notwendigen Module Geopak und MnGeom3 kann überprüft werden, ob die
+Symbole korrekt geladen wurden. 0:000> lm m geopak * Browse full module
+list start end module name 00007ff7 ` fa2d0000 00007ff7 ` fc142000
+GEOPAK64 C ( private pdb symbols ) d: \ temp \ bug 32147\ GEOPAK64.pdb
+0:000> lm m mngeom364 4
+
+Browse full module list start end module name 00007ff9 `95 c00000
+00007ff9 `95 c2c000 MnGeom364 C ( private pdb symbols ) d: \ temp \ bug
+32147\ MnGeom364.pdb Für beide Module sind Symbole mit Informationen zu
+privaten Methoden etc. vorhanden. 1.1.3 Exception Analyse Wie bereits
+bei den grundlegenden Prüfungen gesehen, handelt es sich beim Absturz um
+eine Access Violation, also eine Art NullPointerException. Nach dem
+Einstellen der Symbole verschwindet allerdings die Warnung. 0:000> .exr
+1 ExceptionAddress: 00007ff995c1d48e (
+MnGeom364!tg_ajc_lin_int+0x000000000000014e ) ExceptionCode: c0000005 (
+Access violation ) ExceptionFlags: 00000000 NumberParameters: 2
+Parameter [ 0 ] : 0000000000000000 Parameter [1] : 0000000000000000
+Attempt to read from address 0000000000000000 Der Callstack liefert
+nicht die richtigen Angaben 0:000> k # Child - SP RetAddr Call Site 00
+00000056 `12337 058 00000193 `813 b1bec ntdll!NtGetContextThread+0x14 01
+00000056 `12337 060 0000001f ` 00000002 0x00000193 `813 b1bec 02
+00000056 `12337 068 0000003e ` 0000003e 0x0000001f ` 00000002 03
+00000056 `12337 070 00009c67 ` 02cb62cf 0x0000003e ` 0000003e 04
+00000056 `12337 078 00009c67 ` 02cb7d3f 0x00009c67 ` 02cb62cf 05
+00000056 `12337 080 00000000 ` 00000000 0x00009c67 ` 02cb7d3f Dies
+bedeutet, dass der Kontext noch nicht auf die Exception gesetzt ist. 5
+
+0:000> .ecxr rax = 0000000000000000 rbx = 000000561233b3f8 rcx =
+000000561233af18 rdx = ffffffffffffffe0 rsi = 000000561233b490 rdi =
+000000561233b470 rip = 00007ff995c1d48e rsp = 000000561233afe0 rbp =
+000000561233b0e0 r8 = 00000193a1a21c90 r9 = 0000000000000014 r10 =
+000000000000003c r11 = 000000561233afd0 r12 = 00000193a1a21c90 r13 =
+000000561233b608 r14 = 0000000000000014 r15 = 0000000000000001 iopl = 0
+nv up ei pl nz na pe nc cs = 0033 ss = 002b ds = 002b es = 002b fs =
+0053 gs = 002b efl = 00010202 MnGeom364!tg_ajc_lin_int+0x14e: 00007ff9
+`95 c1d48e 0f1000 movups xmm0,xmmword ptr [ rax ] ds:00000000 ` 00000000
+= ???????????????????????????????? Nach dem Setzen des Kontexts wird die
+Methode tg_ajc_lin_int auf dem Stack erkannt. 0:000> k Lb *** Stack
+trace for last set context - .thread / .cxr resets it # Child - SP
+RetAddr Call Site 00 00000056 `1233 afe0 00007ff9 `95 c1d8b8
+MnGeom364!tg_ajc_lin_int+0x14e [ d: \ gitrepos \
+mitutoyo.mcosmos.basicslibs \ source \ mngeom3 \ tg_geom.c @ 955] 01
+00000056 `1233 b350 00007ff9 `95 c1fefb MnGeom364!tg_ajc_lin_rl+0xd8 [
+d: \ gitrepos \ mitutoyo.mcosmos.basicslibs \ source \ mngeom3 \
+tg_geom.c @ 993] 02 00000056 `1233 b560 00007ff7 ` fae310df
+MnGeom364!tg_inn_ajc_lin+0x2b [ d: \ gitrepos \
+mitutoyo.mcosmos.basicslibs \ source \ mngeom3 \ tg_geom.c @ 1 026 ] 03
+00000056 `1233 b6b0 00007ff7 ` fae4a291 GEOPAK64!pel_line+0x77f [ g: \
+git \ mcosmos50 \ geopak \ source \ geopak \ pelmadcp.cpp @ 5498] 04
+00000056 `1233 bf00 00007ff7 ` fae49687
+GEOPAK64!pelm_comp_elem_intern+0xc01 [ g: \ git \ mcosmos50 \ geopak \
+source \ geopak \ pelmadcp.cpp @ 8255] 05 00000056 `1233 e730 00007ff7 `
+fa7f5a88 GEOPAK64!pelm_comp_elem+0x77 [ g: \ git \ mcosmos50 \ geopak \
+source \ geopak \ pelmadcp.cpp @ 8651] 06 00000056 `1233 e790 00007ff7 `
+fa920b77 GEOPAK64!fctctr_cpnt_end+0x748 [ g: \ git \ mcosmos50 \ geopak
+\ source \ geopak \ fctctrmngr.cpp @ 1376] 07 00000056 `1233 efe0
+00007ff7 ` fa91d26c GEOPAK64!fctmngr_wrk_fct+0x1177 [ g: \ git \
+mcosmos50 \ geopak \ source \ geopak \ fct_mngr.cpp @ 1314] 08 00000056
+`1233 f070 00007ff7 ` faaf8df3 GEOPAK64!fctmngr_wrk+0x68c [ g: \ git \
+mcosmos50 \ geopak \ source \ geopak \ fct_mngr.cpp @ 1924] 09 00000056
+`1233 f120 00007ff7 ` fabd9301 GEOPAK64!CGeopakDoc::PartProgCmdWrk+0x13
+[ g: \ git \ mcosmos50 \ geopak \ source \ geopak \ geopakdoc.cpp @
+3711] 0a 00000056 `1233 f150 00007ff9 ` ab5287f9
+GEOPAK64!CMainFrame::OnMsgNvUserEvent+0x281 [ g: \ git \ mcosmos50 \
+geopak \ source \ geopak \ mainfrm.cpp @ 2215] Ausgehend von einer
+Nutzerinteraktion (OnMsgNvUserEvent) werden mehrere Methoden 6
+
+aufgerufen, die dann zum Absturz führen. 1.1.4 Extraktion von Daten für
+einen Unit Test Der Code der betroffenen Stelle aus TG_GEOM.C, Commit
+f5d4dbb8. 937 INTERN MinMaxDist_T tg_ajc_lin_int ( UInt4 ulNoofPnts ,
+938 VecR8 LP aPoints , 939 const VecR8 LP pMatDir , 940 VecR8 LP pLoc ,
+941 VecR8 LP pDir , 942 Bool DirLam , 943 Bool bFitLin ) 944 /*
+************************************************************************
+945
+************************************************************************
+*/ 946 { Real8 Tmp , Dist , MxD = 0.0; 947 Bool bCond ; 948 VecR8
+Extremum , SupPnt = NVecR8 , MatDir = * pMatDir , Dir = * pDir , Loc = *
+pLoc , LocBord ; 949 MinMaxDist_T Local = {0.0, 0.0, 0.0, NULL , NULL },
+LocalBord = {0.0, 0.0, 0.0, NULL , NULL }; 950 UInt4 uMaxRep = 1; 951
+952 if ( ulNoofPnts <3) return Local ; 953 pln_para_pnt (& MatDir , &
+Dist , & Loc ); 954 Local = min_max_dist_pln (& MatDir , Dist ,
+ulNoofPnts , aPoints ); 955 Extremum = ( bFitLin ) ? * Local . MinPnt :
+* Local . MaxPnt ; 956 if ( bord_lin (& Loc , & Dir , & MxD , & Extremum
+, & SupPnt , ulNoofPnts , aPoints , DirLam )) 957 { 958 do { 959 LocBord
+= Loc ; 960 Extremum = SupPnt ; uMaxRep ++; 961 MatDir = vec_norm (
+vec_vec_prod ( Dir , vec_vec_prod ( MatDir , Dir )), & Tmp ); 962
+pln_para_pnt (& MatDir , & Dist , pLoc ); 963 LocalBord =
+min_max_dist_pln (& MatDir , Dist , ulNoofPnts , aPoints ); 964 bCond =
+bord_lin (& Loc , & Dir , & MxD , & Extremum , & SupPnt , ulNoofPnts ,
+aPoints , DirLam ); 965 if ( bCond && ( LocalBord . MinMax < Local .
+MinMax )) 966 { * pDir = Dir ; * pLoc = Loc ; Local = LocalBord ;} 967 }
+968 while ( 969 bCond && 970 ( uMaxRep < ulNoofPnts ) && 971 (
+bg_dist_pntpnt ( LocBord , Loc ) > TG_EPS_PLN ) 972 ); 973 } 974 return
+Local ; 975 } 7
+
+Da der betroffene Code vor der Umstellung auf 64 Bit 12 Jahre lang nicht
+verändert wurde, wurde angenommen, dass nicht die Methode selbst,
+sondern die übergebenen Parameter für den Absturz verantwortlich sind.
+Diese Daten können extrahiert werden. 0:000> .frame 0 00 00000056 `1233
+afe0 00007ff9 `95 c1d8b8 MnGeom364!tg_ajc_lin_int+0x14e [ d: \ gitrepos
+\ mitutoyo.mcosmos.basicslibs \ source \ mngeom3 \ tg_geom.c @ 955] Der
+Befehl .frame wechselt zu einem bestimmten Stackframe, hier dem
+obersten. 0:000> dv ulNoofPnts = 0x14 aPoints = 0x00000193 ` a1a21c90
+pMatDir = < value unavailable> pLoc = 0x00000056 `1233 b470 pDir =
+0x00000056 `1233 b490 DirLam = True ( 0n1 ) bFitLin = True ( 0n1 )
+Extremum = < value unavailable> Loc = struct VecR8 LocalBord = < value
+unavailable> Dist = < value unavailable> bCond = < value unavailable>
+MatDir = struct VecR8 MxD = 0 SupPnt = struct VecR8 Dir = struct VecR8
+Tmp = 0 uMaxRep = 1 LocBord = < value unavailable> Aus dieser Ausgabe
+lassen sich bereits ulNoofPoints, DirLam und bFitLin entnehmen. Die
+Variable bFitLin ist true, d.h. in Zeile 955 wird *Local.MinPnt
+dereferenziert. Dieser Wert wurde in Zeile 949 mit NULL initialisiert
+und seither offenbar nicht geändert. 0:000> dD / c 3 0x193a1a21c90 L0n60
+00000193 ` a1a21c90 1 0 0.03674 0 00000193 ` a1a21ca8 9 0.0205 0
+00000193 ` a1a21cc0 8 0.01371 0 8
+
+00000193 ` a1a21cd8 7 0.085 0 00000193 ` a1a21cf0 6 0.0286 0 00000193 `
+a1a21d08 5 0.02998 0 00000193 ` a1a21d20 4 - 0.05377 0 00000193 `
+a1a21d38 3 0.03051 0 00000193 ` a1a21d50 2 0.06661 0 00000193 ` a1a21d68
+1 - 0.09365 0 00000193 ` a1a21d80 9 .5 - 0.09092 0 00000193 ` a1a21d98 8
+.5 0.03863 0 00000193 ` a1a21db0 7 .5 0.04022 0 00000193 ` a1a21dc8 6 .5
+- 0.06106 0 00000193 ` a1a21de0 5 .5 0.05629 0 00000193 ` a1a21df8 4 .5
+- 0.00172 0 00000193 ` a1a21e10 3 .5 0.08086 0 00000193 ` a1a21e28 2 .5
+- 0.04595 0 00000193 ` a1a21e40 1 .5 - 0.0227 0 00000193 ` a1a21e58 -
+0.5 0.01736 0 Die übergebenen Punkte (aPoints) sind nicht auffällig.
+0:000> dx - r1 (*(( MnGeom364!VecR8 *) 0x561233b250 )) (*((
+MnGeom364!VecR8 *) 0x561233b250 )) [ Type: VecR8 ] [ +0x000 ] x : -
+0.002335 [ Type: double ] [ +0x008 ] y : - 0.999997 [ Type: double ] [
++0x010 ] z : - 0.000000 [ Type: double ] Der Wert von pMatDir ist nicht
+auffällig. 0:000> dx - r1 (( MnGeom364!VecR8 *) 0x561233b470 ) ((
+MnGeom364!VecR8 *) 0x561233b470 ) : 0x561233b470 [ Type: VecR8 *] [
++0x000 ] x : 0.000000 [ Type: double ] [ +0x008 ] y : 1 . # QNAN0 [
+Type: double ] [ +0x010 ] z : 4 .750082 [ Type: double ] 0:000> dx - r1
+(*(( MnGeom364!VecR8 *) 0x561233b040 )) (*(( MnGeom364!VecR8 *)
+0x561233b040 )) [ Type: VecR8 ] [ +0x000 ] x : 0.000000 [ Type: double ]
+[ +0x008 ] y : 1 . # QNAN0 [ Type: double ] [ +0x010 ] z : 4 .750082 [
+Type: double ] Der Werte von pLoc und dessen lokale Kopie Loc enthalten
+allerdings den Sonderwert NaN (not a number). 9
+
+0:000> dx - r1 (( MnGeom364!VecR8 *) 0x561233b490 ) (( MnGeom364!VecR8
+*) 0x561233b490 ) : 0x561233b490 [ Type: VecR8 *] [ +0x000 ] x :
+0.999997 [ Type: double ] [ +0x008 ] y : - 0.002335 [ Type: double ] [
++0x010 ] z : 0.000000 [ Type: double ] Der Wert für pDir ist nicht
+auffällig. 1.1.5 Unit Test Zunächst wurde der Unit Test mit den
+ermittelten Parametern angelegt. Danach wurden die Werte verkürzt und
+vereinfacht. Mit Hilfe von SEH (structured exception handling) konnte
+die Access Violation im Unit Test nachgewiesen werden. Es ist allerdings
+zu berücksichtigen, dass im Fall von Undefined Behavior alle Unit Tests
+nicht aussagekräftig sind. TEST_METHOD (
+QNAN_causes_undefined_behavior_due_to_nullpointer_dereferencing ) {
+const UInt4 ulNoofPnts = 3; VecR8 aPoints [3] = { {1 ,1 ,1 }, {1 ,1 ,1
+}, {1 ,1 ,1 }, }; VecR8 matDir = { 1, 1, 1 }; double qnan = std ::
+numeric_limits < double >:: quiet_NaN (); VecR8 Loc = { 1, qnan , 1 };
+VecR8 Dir = { 1, 1, 1 }; bool exception = false ; __try { tg_ajc_lin_ext
+( ulNoofPnts , aPoints , & matDir , & Loc , & Dir , True , True ); }
+__except ( GetExceptionCode () == EXCEPTION_ACCESS_VIOLATION ?
+EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH ) { exception =
+true ; } Assert :: IsTrue ( exception ); } 10
+
+tg_ajc_lin_ext() ruft tg_ajc_lin_int() auf. pLoc wird an die Funktion
+pln_para_pnt() übergeben, die das Skalarprodukt ausrechnet
+(vec_sca_prod()). Hierbei wird NaN weiterpropagiert, so dass auch Dist
+NaN wird. Die Funktion min_max_dist_pln() bekommt Dist übergeben und
+propagiert ihn an D. Dadurch ergeben alle Vergleiche im Code 775 if ( D
+< DMin ) { LocalR . MinVal = D ; DMin = D ; LocalR . MinPnt = & aPoints
+[ i ];} 776 if ( D > DMax ) { LocalR . MaxVal = D ; DMax = D ; LocalR .
+MaxPnt = & aPoints [ i ];} ein negatives Ergebnis und keine der Pointer
+MinPnt und MaxPnt werden zugewiesen. Sie bleiben auf ihrem DefaultWert
+NULL. 1.1.6 Mögliche Herkunft von NaN Der Speicherinhalt an Stelle
+0x561233b470 enthält den NaN Wert für die Eigenschaft y. 0:000> dx - r1
+(( MnGeom364!VecR8 *) 0x561233b470 ) (( MnGeom364!VecR8 *) 0x561233b470
+) : 0x561233b470 [ Type: VecR8 *] [ +0x000 ] x : 0.000000 [ Type: double
+] [ +0x008 ] y : 1 . # QNAN0 [ Type: double ] [ +0x010 ] z : 4 .750082 [
+Type: double ] Im Fall einer nichtinitalisierten Variable könnte die
+Gleitkommazahl auch eine 64 Bit Ganzzahl gewesen sein. 0:000> dq / c 3
+0x561233b470 L3 00000056 `1233 b470 00000000 ` 00000000 ffffffff `
+ffffffc8 4 0130015 `997 ff316 0:000> ? ffffffff ` ffffffc8 11
+
+Evaluate expression: 56 = ffffffff ` ffffffc8 Falls das zutrifft, wäre
+ihr Wert 56 gewesen. Der Wert NaN wurde bereits an die Funktion
+tg_ajc_lin_int() übergeben. Der gemeldete Bug betrifft also ggf. nicht
+nur die Dereferenzierung eines Nullpointers, sondern auch frühere
+Methoden auf dem Callstack. Betroffen sind: 0:000> k L5 # Child - SP
+RetAddr Call Site 00 00000056 `1233 afe0 00007ff9 `95 c1d8b8
+MnGeom364!tg_ajc_lin_int+0x14e 01 00000056 `1233 b350 00007ff9 `95
+c1fefb MnGeom364!tg_ajc_lin_rl+0xd8 02 00000056 `1233 b560 00007ff7 `
+fae310df MnGeom364!tg_inn_ajc_lin+0x2b 03 00000056 `1233 b6b0 00007ff7 `
+fae4a291 GEOPAK64!pel_line+0x77f 04 00000056 `1233 bf00 00007ff7 `
+fae49687 GEOPAK64!pelm_comp_elem_intern+0xc01 977 INTERN void
+tg_ajc_lin_rl ( UInt4 ulNoofPnts , 978 VecR8 LP aPoints , 979 const
+VecR8 LP pMatDir , 980 VecR8 LP pLoc , 981 VecR8 LP pDir , 982 VecR8 LP
+pMaxPnt , 983 VecR8 LP pMinPnt , 984 Bool bFitLin ) 985 /*
+************************************************************************
+986
+************************************************************************
+*/ 987 { VecR8 LocR = * pLoc , LocL = * pLoc , vTemp , 988 DirR = * pDir
+, DirL = * pDir , 989 MatDir = * pMatDir , Extremum , MaxPnt , MinPnt ,
+Loc ; 990 Real8 MxD , Dist , Tmp = 0.0; 991 MinMaxDist_T Local , LocalR
+, LocalL ; 992 993 LocalR = tg_ajc_lin_int ( ulNoofPnts , aPoints ,
+pMatDir , & LocR , & DirR , True , bFitLin ); 994 LocalL =
+tg_ajc_lin_int ( ulNoofPnts , aPoints , pMatDir , & LocL , & DirL ,
+False , bFitLin ); Hier werden &LocL sowie &LocR übergeben. In beiden
+Fällen handelt es sich um Kopien von pLoc. 12
+
+1012 ErrNoT EXPORT tg_inn_ajc_lin ( UInt4 ulNoofPnts , 1013 VecR8 LP
+aPoints , 1014 const VecR8 LP pMatDir , 1015 VecR8 LP pLoc , 1016 VecR8
+LP pDir , 1017 Real8 LP pdftLambda1 , 1018 Real8 LP pdftLambda2 , 1019
+Real4 LP pftMaxDif ) 1020 /*
+************************************************************************
+1021 << FIT >> 1022
+************************************************************************
+*/ 1023 { VecR8 MatDir , MaxPnt , MinPnt , Loc ; 1024 Real8 Dist , Tmp ;
+1025 1026 if ( 3 > ulNoofPnts ) return ERR_TG_INSUF_PTS ; 1027
+tg_ajc_lin_rl ( ulNoofPnts , aPoints , pMatDir , & Loc , pDir , & MaxPnt
+, & MinPnt , True ); 1028 // projection the Gau \ ss centroid on the
+Tschebycheff line 1029 MatDir = vec_norm ( vec_vec_prod (* pDir ,
+vec_vec_prod (* pMatDir , * pDir )), & Tmp ); 1030 * pLoc =
+bg_proj_pnt_pln (* pLoc , MatDir , Loc ); Hier wird &Loc an die Funktion
+übergeben, Loc bei der Deklaration aber nicht initialisiert. 1.2 Build
+Instructions 1.2.1 WinDbg Crash Analyse Benötigte Tools:  Windows
+Betriebssystem  WinDbg Preview [ 1 ]  Crash Dumb des Bugs 
+SymbolDateien des Codes > GEOPAK64.pdb, MnGeom364.pdbS  Zugriff auf
+Azure DevOps Server von MitutoyoCTL Germany GmbH Um den Crash Dump nun
+zu analysieren, wird dieser mit WinDbg Preview über die 13
+
+Funktion Open dump file geöffnet. Die darauf folgenden Schritte sind
+bereits in 1.1 beschrieben. 1.2.2 Kompilieren von
+Mitutoyo.MCOSMOS.BasicLibs Benötigte Tools:  Windows Betriebssystem 
+Visual Studio 2017 oder Visual Studio 2019 ohne Updates  Zugriff auf
+den Azure DevOps Serever von MitutoyoCTL Germansy GmbH  Git Extensions
+oder ein ähnliches Tool zum Klonen von Git Repositorys Damit der Source
+Code kompiliert werden kann, muss dieser zuest mit Git Extensions (oder
+einem ähnlichen Tool) von http : / / tfs-ctlg . mitutoyo-ctl . de /
+Public / Projects / _git / Mitutoyo . MCOSMOS . BasicsLibs geklont
+werden. Anschließend öffnet man den Ordner Mitutoyo.MCOSMOS.BasicsLibs
+mit Visual Studio. Abbildung 1.1: Hier den Eintrag ändern Da keine
+Leerzeichen im Pfadname verarbeiten kann, muss in den Eigenschaften der
+Datei Mitutoyo.MCOSMOS.BasicsLibs\Source\CryptoPP\x64dll.asm unter
+Custom Build 14
+
+Tool > General > Command Line folgender Eintrag eingegeben werden:
+ml64.exe /c /nologo /Fo"$(IntDir)x64dll.obj Zi "%(FullPath)" (vgl. 1.1
+). Des Weiteren muss in der Datei IniFileHelper.h folgender Code ergänzt
+werden: 14 #define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
+15 #include <experimental/filesystem> Zuletzt muss die Operation
+Restore NuGet Packages, über einen Rechtsklick auf die Solution,
+ausgewählt und ausgeführt werden. Der Code kann nun kompiliert werden.
+15
+
+Literatur [1] Microsoft.com, WinDbg Preview. url: https : / / www .
+microsoft . com / en - us / p / windbg - preview / 9pgjgd53tn86 ?
+activetab = pivot : overviewtab (besucht am 20.01.2021). 16

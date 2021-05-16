@@ -1,0 +1,67 @@
+\ProvidesPackage{dhbwTitlepage}
+
+\RequirePackage[utf8]{inputenc}
+\RequirePackage{tabularx}
+\RequirePackage{graphicx}
+\RequirePackage[export]{adjustbox}      % Positionierung von Bildern
+
+% \project: Typ der Arbeit an (Studienarbeit, Bachelorarbeit)
+\newcommand*{\project}[1]{\gdef\@project{#1}}
+
+% \supervisor: Betreuer der Arbeit
+\newcommand*{\supervisor}[1]{\gdef\@supervisor{#1}}
+
+% \studentNumber: Matrikelnummer
+\newcommand*{\studentNumber}[1]{\gdef\@studentNumber{#1}}
+
+% \class: Kurs
+\newcommand*{\class}[1]{\gdef\@class{#1}}
+
+% \company: Ausbildungsfirma
+\newcommand*{\company}[1]{\gdef\@company{#1}}
+
+\newcommand*{\@project}{Typ der Arbeit}
+\newcommand*{\@supervisor}{Betreuer}
+\newcommand*{\@studentNumber}{Matrikelnummer}
+\newcommand*{\@class}{Kurs}
+\newcommand*{\@company}{Ausbildungsfirma}
+
+\renewcommand*{\maketitle}
+{
+    \begin{titlepage}
+        \begin{figure}[h]
+            \includegraphics[width=0.3\textwidth, right]{dhbw_logo.png}
+        \end{figure}
+        \vspace{1cm}
+
+        \large
+        {
+            \centering
+            { \huge \textbf{\@title} }
+            \vspace{2cm}
+
+            { \Large \textbf{\@project} }
+            \vspace{1cm}
+
+            des Studiengangs Informatik
+
+            an der Dualen Hochschule Baden-Württemberg Stuttgart
+            \vspace{1.5cm}
+
+            von
+
+            \textbf{\@author}
+            \vspace{1cm}
+
+            \@date
+
+        }
+
+        \vfill
+        \noindent\begin{tabularx}{\textwidth}{Xl}
+            \textbf{Matrikelnummer, Kurs:} & \@studentNumber, \@class \\
+            \textbf{Ausbildungsfirma:} & \@company \\
+            \textbf{Betreuer:} & \@supervisor \\
+        \end{tabularx}
+    \end{titlepage}
+}
