@@ -1,0 +1,6 @@
+flask
+flask_jsonrpc
+numpy
+opencv-python-headless
+pillow
+imageio
