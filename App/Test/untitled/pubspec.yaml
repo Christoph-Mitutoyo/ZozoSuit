@@ -33,7 +33,7 @@ dependencies:
   english_words: ^4.0.0-0
 
   # tools to work with the camera on the device
-  camera:
+  camera: ^0.8.1
 
   # finds correct path to store images
   path_provider:

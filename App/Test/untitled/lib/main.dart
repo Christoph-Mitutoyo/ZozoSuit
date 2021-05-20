@@ -22,10 +22,7 @@ Future<void> main() async {
 
   // Get a specific camera from the list of available cameras.
   firstCamera = cameras.first;
-  runApp(MaterialApp(
-    theme: ThemeData.dark(),
-    home: MyApp()
-  ));
+  runApp(MaterialApp(theme: ThemeData.dark(), home: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -44,8 +41,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
-
 class RandomWords extends StatefulWidget {
   const RandomWords({
     Key key,
@@ -60,31 +55,30 @@ class _RandomWordsState extends State<RandomWords> {
   final _saved = <WordPair>{};
   final _biggerFont = TextStyle(fontSize: 18.0);
 
-
   void _pushSaved() {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-          builder: (BuildContext context) {
-            final tiles = _saved.map(
-                (WordPair pair) {
-                  return ListTile(
-                    title: Text(
-                      pair.asPascalCase,
-                      style: _biggerFont,
-                    ),
-                  );
-                },
-            );
-            final divided = tiles.isNotEmpty
-            ? ListTile.divideTiles(context: context, tiles: tiles).toList()
-            : <Widget>[];
-            return Scaffold(
-              appBar: AppBar(
-                title: Text('Saved Suggestions'),
-              ),
-              body: ListView(children: divided),
-            );
-          },
+        builder: (BuildContext context) {
+          final tiles = _saved.map(
+            (WordPair pair) {
+              return ListTile(
+                title: Text(
+                  pair.asPascalCase,
+                  style: _biggerFont,
+                ),
+              );
+            },
+          );
+          final divided = tiles.isNotEmpty
+              ? ListTile.divideTiles(context: context, tiles: tiles).toList()
+              : <Widget>[];
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Saved Suggestions'),
+            ),
+            body: ListView(children: divided),
+          );
+        },
       ),
     );
   }
@@ -113,50 +107,49 @@ class _RandomWordsState extends State<RandomWords> {
   }
 
   Widget _buildSuggestions() {
+    return Stack(children: <Widget>[
+      ListView.builder(
+          padding: EdgeInsets.all(16.0),
+          itemBuilder: (context, i) {
+            if (i.isOdd) return Divider();
 
-    return Stack(
-      children: <Widget>[
-        ListView.builder(
-        padding: EdgeInsets.all(16.0),
-        itemBuilder: (context, i) {
-          if (i.isOdd) return Divider();
-
-          final index = i ~/ 2;
-          if (index >= _suggestions.length) {
-            _suggestions.addAll(generateWordPairs().take(10));
-          }
-          return _buildRow(_suggestions[index]);
-        }),
-        Align(
-          alignment: Alignment.bottomRight,
-          child: Container(
+            final index = i ~/ 2;
+            if (index >= _suggestions.length) {
+              _suggestions.addAll(generateWordPairs().take(10));
+            }
+            return _buildRow(_suggestions[index]);
+          }),
+      Align(
+        alignment: Alignment.bottomRight,
+        child: Container(
           margin: EdgeInsets.all(20),
-              child: ElevatedButton(
-                child: Text('Camera'),
-                onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => TakePictureScreen(camera: firstCamera)),
-                    );
-                },
-              ),
+          child: ElevatedButton(
+            child: Text('Camera'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        TakePictureScreen(camera: firstCamera)),
+              );
+            },
           ),
         ),
-        Align(
-          alignment: Alignment.bottomLeft,
-          child: Container(
-            margin: EdgeInsets.all(20),
-            child: ElevatedButton(
-              child: Text('Gallery'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => TestImageFromGallery()),
-                );
-              },
-            ),
-          ),
-        ),
+      ),
+      // alignment: Alignment.bottomLeft,
+      //  child: Container(
+      //    margin: EdgeInsets.all(20),
+      //    child: ElevatedButton(
+      //      child: Text('Gallery'),
+      //      onPressed: () {
+      //        Navigator.push(
+      //          context,
+      //          MaterialPageRoute(builder: (context) => TestImageFromGallery()),
+      //        );
+      //      },
+      //    ),
+      //  ),
+      //),
     ]);
   }
 
@@ -166,7 +159,10 @@ class _RandomWordsState extends State<RandomWords> {
       appBar: AppBar(
         title: Text('Startup Name Generator'),
         actions: [
-          IconButton(icon: Icon(Icons.list), onPressed: _pushSaved,)
+          IconButton(
+            icon: Icon(Icons.list),
+            onPressed: _pushSaved,
+          )
         ],
       ),
       body: _buildSuggestions(),

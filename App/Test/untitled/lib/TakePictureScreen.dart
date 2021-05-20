@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 
 import 'package:untitled/DisplayPictureScreen.dart';
 
+import 'FutureDisplayPictureScreen.dart';
 
 class TakePictureScreen extends StatefulWidget {
   final CameraDescription camera;
@@ -43,7 +44,6 @@ class _TakePictureScreenState extends State<TakePictureScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(title: Text('Take a pic')),
       body: FutureBuilder<void>(
@@ -58,17 +58,16 @@ class _TakePictureScreenState extends State<TakePictureScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.camera_alt),
-        onPressed: () async{
+        onPressed: () async {
           try {
             await _initializeControllerFuture;
             final image = await _controller.takePicture();
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      DisplayPictureScreen(
-                    imagePath: image?.path,
-                  ),
+                builder: (context) => FutureDisplayPictureScreen(
+                  imagePath: image?.path,
+                ),
               ),
             );
           } catch (e) {
