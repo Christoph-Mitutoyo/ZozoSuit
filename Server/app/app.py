@@ -12,7 +12,7 @@ from flask import jsonify
 app = Flask(__name__)
 
 # Flask-JSONRPC
-jsonrpc = JSONRPC(app, '/api', enable_web_browsable_api=True)
+jsonrpc = JSONRPC(app, '/api')
 
 
 @jsonrpc.method('App.index')
