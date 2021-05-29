@@ -6,6 +6,7 @@ from flask import Flask
 from imageio import imread
 from flask_jsonrpc import JSONRPC
 from Measure.detect_points import detect_points
+from Render.render import render
 from flask import jsonify
 
 # Flask application
@@ -31,8 +32,13 @@ def zozomeasure(a1: str) -> str:
     # convert RGB image to BGR for opencv
     cv2_img = cv2.cvtColor(tmp_img, cv2.COLOR_RGB2BGR)
     point_ids, confidences, positions, distances, raw_data = detect_points(cv2_img)
-    return '-'.join(str(e) for e in raw_data)
+    # Todo: raw_data => pose + betas
+    render('female')
+    with open('server/output.stl', 'rb') as f:
+        encoded = base64.b64encode(f.read())
+    return str(encoded)
 
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
+    
