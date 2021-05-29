@@ -4,3 +4,6 @@ numpy
 opencv-python-headless
 pillow
 imageio
+trimesh
+torch
+./server/app/star
