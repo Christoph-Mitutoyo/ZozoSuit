@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -10,7 +11,7 @@ import 'package:untitled/TestImageFromGallery.dart';
 
 // min sdk: 21, due to camera
 
-CameraDescription firstCamera;
+CameraDescription backCamera;
 
 Future<void> main() async {
   // Ensure that plugin services are initialized so that `availableCameras()`
@@ -20,8 +21,15 @@ Future<void> main() async {
   // Obtain a list of the available cameras on the device.
   final cameras = await availableCameras();
 
-  // Get a specific camera from the list of available cameras.
-  firstCamera = cameras.first;
+  CameraDescription camera;
+  // Get a back facing camera from the list of available cameras.
+  for (camera in cameras) {
+    if (camera.lensDirection == CameraLensDirection.back) {
+      backCamera = camera;
+      break;
+    }
+  }
+  //firstCamera = cameras.first;
   runApp(MaterialApp(theme: ThemeData.dark(), home: MyApp()));
 }
 
@@ -32,7 +40,8 @@ class MyApp extends StatelessWidget {
       title: 'Random Names Generator',
       theme: ThemeData(
         primaryColor: Colors.blueAccent,
-        secondaryHeaderColor: Colors.amber,
+        //secondaryHeaderColor: Colors.amber,
+        //colorScheme: ColorScheme.dark(),
         canvasColor: Colors.white24,
         brightness: Brightness.dark,
       ),
@@ -130,7 +139,7 @@ class _RandomWordsState extends State<RandomWords> {
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
-                        TakePictureScreen(camera: firstCamera)),
+                        TakePictureScreen(camera: backCamera)),
               );
             },
           ),

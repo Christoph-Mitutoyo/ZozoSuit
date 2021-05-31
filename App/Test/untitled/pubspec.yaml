@@ -44,6 +44,9 @@ dependencies:
   # select image from gallery
   image_picker: ^0.7.5
 
+  # http requests
+  http:
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
