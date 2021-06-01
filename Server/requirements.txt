@@ -1,9 +1,9 @@
 flask
-flask_jsonrpc
 numpy
 opencv-python-headless
 pillow
 imageio
 trimesh
 torch
-./server/app/star
+flask_json
+./app/star

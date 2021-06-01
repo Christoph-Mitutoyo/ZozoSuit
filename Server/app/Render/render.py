@@ -49,4 +49,4 @@ def render(gender):
   model = star.forward(poses, betas,trans)
 
   out_mesh = trimesh.Trimesh(model[0], model.f, process=False)
-  trimesh.exchange.export.export_mesh(out_mesh, 'server/output.stl', file_type='stl', resolver=None)
+  trimesh.exchange.export.export_mesh(out_mesh, 'output.stl', file_type='stl', resolver=None)

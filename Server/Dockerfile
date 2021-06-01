@@ -1,10 +1,7 @@
 FROM python:3.9-slim
-COPY requirements.txt /opt/app/requirements.txt
-WORKDIR /opt/app
+COPY . .
 RUN pip install -r requirements.txt
-COPY . /opt/app
 RUN useradd -ms /bin/bash admin
+RUN chown -R admin output.stl
 USER admin
-WORKDIR /app
-COPY app /app
-CMD ["python", "app.py"]
+CMD ["python", "app/app.py"]

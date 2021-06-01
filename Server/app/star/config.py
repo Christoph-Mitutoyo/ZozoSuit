@@ -20,9 +20,9 @@
 # Ahmed A. A. Osman
 
 import os
-path_male_star = 'server/app/star/star_1_1/male/model.npz'
-path_female_star = 'server/app/star/star_1_1/female/model.npz'
-path_neutral_star = 'server/app/star/star_1_1/neutral/model.npz'
+path_male_star = 'app/star/star_1_1/male/model.npz'
+path_female_star = 'app/star/star_1_1/female/model.npz'
+path_neutral_star = 'app/star/star_1_1/neutral/model.npz'
 
 data_type = 'float32'
 
