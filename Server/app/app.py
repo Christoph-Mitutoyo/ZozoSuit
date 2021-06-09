@@ -25,11 +25,11 @@ def zozomeasure():
     cv2_img = cv2.cvtColor(tmp_img, cv2.COLOR_RGB2BGR)
     point_ids, confidences, positions, distances, raw_data = detect_points(cv2_img)
     # Todo: raw_data => pose + betas
-    render('female')
+    # render('female')
     with open('output.stl', 'rb') as f:
         encoded = base64.b64encode(f.read())
     return json_response(result=str(encoded))
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0', debug=True, ssl_context='adhoc')
