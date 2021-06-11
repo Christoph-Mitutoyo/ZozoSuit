@@ -28,7 +28,7 @@ def zozomeasure():
     point_ids, confidences, positions, distances, raw_data = detect_points(cv2_img)
     # Todo: raw_data => pose + betas
     render(gender, raw_data, len(raw_data))
-    with open('output.stl', 'rb') as f:
+    with open('output.glb', 'rb') as f:
         encoded = base64.b64encode(f.read())
     return json_response(result=str(encoded))
 

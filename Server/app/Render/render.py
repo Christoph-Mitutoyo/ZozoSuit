@@ -115,7 +115,7 @@ def render(gender, data, len):
   model = star.forward(poses, betas,trans)
 
   out_mesh = trimesh.Trimesh(model[0], model.f, process=False)
-  trimesh.exchange.export.export_mesh(out_mesh, 'output.stl', file_type='stl', resolver=None)
+  trimesh.exchange.export.export_mesh(out_mesh, 'output.glb', file_type='glb', resolver=None)
 
   # # display mesh
   # import pyrender
