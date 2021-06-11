@@ -35,7 +35,7 @@ dependencies:
   # tools to work with the camera on the device
   camera: ^0.8.1
 
-  # finds correct path to store images
+  # finds correct path to store images, read and write files
   path_provider:
 
   # creates paths that work on any platform
@@ -46,6 +46,9 @@ dependencies:
 
   # http requests
   http:
+
+  # render 3d models
+  model_viewer: ^0.8.1
 
 dev_dependencies:
   flutter_test:
@@ -64,6 +67,8 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/models/
+    - assets/res/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

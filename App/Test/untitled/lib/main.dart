@@ -9,6 +9,7 @@ import 'package:camera/camera.dart';
 import 'package:untitled/TakePictureScreen.dart';
 import 'package:untitled/PickImageFromGallery.dart';
 import 'package:untitled/TestImageFromGallery.dart';
+import 'package:untitled/TestViewModel.dart';
 
 // min sdk: 21, due to camera
 
@@ -153,6 +154,21 @@ class _RandomWordsState extends State<RandomWords> {
                 MaterialPageRoute(
                     builder: (context) =>
                         TakePictureScreen(camera: backCamera)),
+              );
+            },
+          ),
+        ),
+      ),
+      Align(
+        alignment: Alignment.bottomLeft,
+        child: Container(
+          margin: EdgeInsets.all(20),
+          child: ElevatedButton(
+            child: Text('View Model'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => TestViewModel()),
               );
             },
           ),
