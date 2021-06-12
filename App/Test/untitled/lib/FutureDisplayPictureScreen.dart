@@ -139,7 +139,7 @@ readFilesFromCustomDevicePath() async {
   File file = await File("${directory.path}/model.glb").create();
 
   // Read the file content
-  String fileContent = await file.readAsString();
+  Uint8List fileContent = await file.readAsBytes();
   print("fileContent : ${fileContent}");
 }
 
@@ -148,15 +148,20 @@ Future<String> getFileData(String path) async {
 }
 
 void saveFile(Uint8List content) async {
-  String path = await _localPath;
-  final _modelFile = File('$path/model.glb');
-  print("path: $path");
-  final _textController = TextEditingController();
+  Directory directory = Platform.isAndroid
+      ? await getExternalStorageDirectory()
+      : await getApplicationSupportDirectory();
+  // String path = await _localPath;
+  final _modelFile = File('${directory.path}/model.glb');
+  print("path: ${directory.path}");
+  // final _textController = TextEditingController();
 
-  await _modelFile.writeAsString(_textController.text);
-  _textController.clear();
-  var check = await getFileData("$path/model.glb");
-  print("check:$check");
+  // await _modelFile.writeAsString(_textController.text);
+  // _textController.clear();
+  await _modelFile.writeAsBytes(content);
+  // var check = await getFileData("${directory.path}/model.glb");
+  // print("check:$check");
+  readFilesFromCustomDevicePath();
 }
 
 Future<String> get _localPath async {

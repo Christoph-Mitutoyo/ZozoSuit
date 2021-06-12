@@ -28,25 +28,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cf75e2f5-4b54-42ea-a19f-07019a45ed30" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Test/untitled/assets/models/model.glb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Test/untitled/assets/models/output.glb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Test/untitled/assets/res/TestBase64.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Test/untitled/lib/TestViewModel.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_08_06_2021_16_50__Default_Changelist_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_08_06_2021_16_50__Default_Changelist_.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Test/untitled/android/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Test/untitled/android/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Test/untitled/lib/FutureDisplayPictureScreen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Test/untitled/lib/FutureDisplayPictureScreen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Test/untitled/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Test/untitled/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Test/untitled/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Test/untitled/pubspec.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Test/untitled/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/Test/untitled/pubspec.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Server/output.stl" beforeDir="false" afterPath="$PROJECT_DIR$/../Server/output.stl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/untitled/lib/TestViewModel.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Test/untitled/lib/TestViewModel.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[VirtualDevicePath@D:\Benutzer\Christoph\.android\avd\Pixel_3a_API_30_x86.avd]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[SerialNumber@RZ8MB14RXZY]" />
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -139,37 +131,57 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="718" y="322" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1623420592367" />
-    <state x="142" y="82" width="1736" height="856" key="AVDManager" timestamp="1623222020235">
+    <state x="-177" y="95" width="1736" height="856" key="AVDManager" timestamp="1623514877163">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="142" y="82" width="1736" height="856" key="AVDManager/0.0.1920.1040@0.0.1920.1040" timestamp="1623222020235" />
-    <state x="773" y="266" key="AndroidProcessChooserDialog" timestamp="1623248914450">
+    <state x="-177" y="95" width="1736" height="856" key="AVDManager/0.0.1920.1040@0.0.1920.1040" timestamp="1623514877163" />
+    <state x="773" y="266" key="AndroidProcessChooserDialog" timestamp="1623511100707">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="773" y="266" key="AndroidProcessChooserDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1623248914450" />
+    <state x="773" y="266" key="AndroidProcessChooserDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1623511100707" />
+    <state width="478" height="466" key="DebuggerActiveHint" timestamp="1623514162499">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="478" height="466" key="DebuggerActiveHint/0.0.1920.1040@0.0.1920.1040" timestamp="1623514162499" />
     <state x="740" y="275" key="FileChooserDialogImpl" timestamp="1621931404252">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1621931404252" />
-    <state width="1877" height="245" key="GridCell.Tab.0.bottom" timestamp="1623418844194">
+    <state width="1877" height="245" key="GridCell.Tab.0.bottom" timestamp="1623514694586">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="245" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1623418844194" />
-    <state width="1877" height="245" key="GridCell.Tab.0.center" timestamp="1623418844194">
+    <state width="1877" height="245" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1623514694586" />
+    <state width="1877" height="245" key="GridCell.Tab.0.center" timestamp="1623514694586">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="245" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1623418844194" />
-    <state width="1877" height="245" key="GridCell.Tab.0.left" timestamp="1623418844194">
+    <state width="1877" height="245" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1623514694586" />
+    <state width="1877" height="245" key="GridCell.Tab.0.left" timestamp="1623514694585">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="245" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1623418844194" />
-    <state width="1877" height="245" key="GridCell.Tab.0.right" timestamp="1623418844194">
+    <state width="1877" height="245" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1623514694585" />
+    <state width="1877" height="245" key="GridCell.Tab.0.right" timestamp="1623514694586">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="245" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1623418844194" />
+    <state width="1877" height="245" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1623514694586" />
     <state x="461" y="165" key="SettingsEditor" timestamp="1622445323195">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="461" y="165" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1622445323195" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
+          <url>file://$PROJECT_DIR$/Test/untitled/lib/FutureDisplayPictureScreen.dart</url>
+          <line>160</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
+          <url>file://$PROJECT_DIR$/Test/untitled/lib/FutureDisplayPictureScreen.dart</url>
+          <line>163</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
