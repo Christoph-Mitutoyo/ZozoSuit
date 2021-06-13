@@ -1,4 +1,4 @@
-name: untitled
+name: zozoapp
 description: A new Flutter project.
 
 # The following line prevents the package from being accidentally published to
@@ -50,6 +50,9 @@ dependencies:
   # render 3d models
   model_viewer: ^0.8.1
 
+  # simple progress button
+  progress_indicator_button: ^0.0.3
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -64,12 +67,9 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-
   assets:
-    - assets/images/
-    - assets/models/
+    - assets/images/T.jpg
     - assets/res/
-    - assets/model.glb
     - model.glb
 
   # To add assets to your application, add an assets section, like this:

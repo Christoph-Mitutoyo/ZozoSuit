@@ -29,10 +29,17 @@
   <component name="ChangeListManager">
     <list default="true" id="cf75e2f5-4b54-42ea-a19f-07019a45ed30" name="Default Changelist" comment="">
       <change afterPath="$PROJECT_DIR$/../zozoapp/assets/images/T.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../zozoapp/assets/res/TestBase64.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../zozoapp/assets/model.glb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../zozoapp/lib/DisplayPictureScreen.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../zozoapp/lib/DisplayTestPictureScreen.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../zozoapp/lib/SelectBodyTypeScreen.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../zozoapp/lib/TakePictureScreen.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../zozoapp/lib/ViewModel.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/untitled/android/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Test/untitled/android/app/src/main/AndroidManifest.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Test/untitled/lib/FutureDisplayPictureScreen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Test/untitled/lib/FutureDisplayPictureScreen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Test/untitled/lib/TestViewModel.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Test/untitled/lib/TestViewModel.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/untitled/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Test/untitled/lib/main.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Test/untitled/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/Test/untitled/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -40,7 +47,7 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[VirtualDevicePath@D:\Benutzer\Christoph\.android\avd\Pixel_3a_API_29.avd]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[SerialNumber@RZ8MB14RXZY]" />
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -68,11 +75,11 @@
     <property name="com.intellij.openapi.externalSystem.service.settings.ExternalSystemGroupConfigurable" value="ALL" />
     <property name="dart.analysis.tool.window.visible" value="false" />
     <property name="io.flutter.reload.alreadyRun" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/Test/untitled/assets/models" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/Test/untitled/assets" />
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="editor.preferences.import" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
     <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
   <component name="RecentsManager">
@@ -81,6 +88,7 @@
       <recent name="D:\Uni\Zozo-Suit\App\Test\untitled\assets\images" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Uni\Zozo-Suit\App\Test\untitled\assets" />
       <recent name="D:\Uni\Zozo-Suit\App\Test\untitled\assets\models" />
     </key>
   </component>
@@ -125,18 +133,18 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="712" y="344" key="#Notifications/0.0.1920.1040@0.0.1920.1040" timestamp="1621924204834" />
-    <state x="414" y="175" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1621327589853">
+    <state x="414" y="175" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1623592808588">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="414" y="175" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1621327589853" />
-    <state x="718" y="322" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1623420592367">
+    <state x="414" y="175" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1623592808588" />
+    <state x="718" y="322" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1623577017225">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="718" y="322" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1623420592367" />
-    <state x="-177" y="95" width="1736" height="856" key="AVDManager" timestamp="1623514877163">
+    <state x="718" y="322" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1623577017225" />
+    <state x="-177" y="95" width="1736" height="856" key="AVDManager" timestamp="1623588932817">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="-177" y="95" width="1736" height="856" key="AVDManager/0.0.1920.1040@0.0.1920.1040" timestamp="1623514877163" />
+    <state x="-177" y="95" width="1736" height="856" key="AVDManager/0.0.1920.1040@0.0.1920.1040" timestamp="1623588932817" />
     <state x="773" y="266" key="AndroidProcessChooserDialog" timestamp="1623511100707">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -149,26 +157,26 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1623574944556" />
-    <state width="1877" height="245" key="GridCell.Tab.0.bottom" timestamp="1623574395148">
+    <state width="914" height="242" key="GridCell.Tab.0.bottom" timestamp="1623591763115">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="245" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1623574395148" />
-    <state width="1877" height="245" key="GridCell.Tab.0.center" timestamp="1623574395148">
+    <state width="914" height="242" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1623591763115" />
+    <state width="914" height="242" key="GridCell.Tab.0.center" timestamp="1623591763115">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="245" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1623574395148" />
-    <state width="1877" height="245" key="GridCell.Tab.0.left" timestamp="1623574395148">
+    <state width="914" height="242" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1623591763115" />
+    <state width="914" height="242" key="GridCell.Tab.0.left" timestamp="1623591763115">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="245" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1623574395148" />
-    <state width="1877" height="245" key="GridCell.Tab.0.right" timestamp="1623574395148">
+    <state width="914" height="242" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1623591763115" />
+    <state width="914" height="242" key="GridCell.Tab.0.right" timestamp="1623591763115">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="245" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1623574395148" />
-    <state x="461" y="165" key="SettingsEditor" timestamp="1622445323195">
+    <state width="914" height="242" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1623591763115" />
+    <state x="461" y="165" key="SettingsEditor" timestamp="1623592436876">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="461" y="165" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1622445323195" />
+    <state x="461" y="165" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1623592436876" />
     <state x="542" y="203" key="new project wizard" timestamp="1623574989580">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

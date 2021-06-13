@@ -32,6 +32,8 @@ Future<void> main() async {
   // can be called before `runApp()`
   WidgetsFlutterBinding.ensureInitialized();
 
+  imageCache.clear();
+
   // Obtain a list of the available cameras on the device.
   final cameras = await availableCameras();
 
