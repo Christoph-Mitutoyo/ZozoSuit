@@ -1,0 +1,46 @@
+\chapter{Stand der Technik}
+\label{ch:sdt}
+
+\section{Frontend}
+
+In dieser Studienarbeit sollen Bilder von einer Person im ZOZOSUIT gemacht werden und diese anschließend ausgewertet und als 3D-Modell dargestellt werden. Da sowohl Bilder 
+gemacht, als auch Grafiken angezeigt werden, bietet sich das Smartphone als Frontend an. 
+
+In Deutschland besitzen 81\% der Bevökerung ab 14 Jahren ein Smartphone, in jungen Altersgruppen steigt der Prozentsatz auf über 95\% \cite{misc:marktforschung_smartphone}. 
+Smartphones können innerhalb weniger Sekunden aus der Tasche geholt und gestartet werden, dies ermöglicht einen schnellen Gesprächseinstieg mit Strike Up. \newline
+Für Smartphones bestehen zwei dominante Betriebssysteme: Android und i\acrshort{os}. Mit einem Marktanteil von 69,8\% ist Android in Deutschland Marktführer für 
+Smartphonebetriebssysteme, gefolgt von i\acrshort{os} mit 29,8\%. Andere Betriebssysteme, wie Windows und Blackberry, 
+besitzen einen Marktanteil von 0,4\%. \cite{misc:kantarworldpanel}. \newline
+Für Android entwickelte Apps basieren auf Java oder Kotlin, während i\acrshort{os}-Apps in Swift oder Objective-C entwickelt werden. Des weiteren gibt es Tools und \glspl{sdk}, 
+mit welchen Apps entwickelt werden können, welche mit wenigen Einschränkungen auf beiden Betriebssystemen lauffähig sind:
+\begin{itemize}
+    \item \textbf{React Native}: React Native ist ein JavaScript Framework, welches die \gls{ui} in native (Android oder iOS spezifische) Elemente umwandelt. Die Logik bleibt dabei unverändert. Das Framework wird von Facebook, Instagram und Uber benutzt.
+    \item \textbf{Xamarin}: Xamarin ermöglicht es Entwicklern eine gemeinsame Logik für Android und iOS zu schreiben. Die jeweilige UI wird allerdings in einer nativen Programmiersprache entwickelt.
+    \item \textbf{Flutter}: Flutter ist ein \gls{sdk}, welches von Goolge erstellt, und im Jahr 2018 erstmals in der Version 1.0 veröffentlicht wurde. Das \gls{sdk} verwendet die, ebenso von Google entwickelte, Programmiersprache Dart. Flutter ermöglicht es UI-Komponenten zu entwickeln, welche auf beiden Betriebssystemen konsistent sind.
+\end{itemize}
+
+Damit Apps im App Store von Apple veröffentlicht werden dürfen, benötigt der/die Entwickler/-in eine Mitgliedschaft im Apple Developer Program. Diese kostet pro Jahr 99 US-Dollar \cite{misc:appledeveloper}.
+Des Weiteren kann eine für i\gls{os} entwickelte Anwendung nur in einer Apple-Umgebung (Macbook, \dots) kompiliert werden. \newline
+Aus diesen Gründen, und wegen dem Verbreitungsanteil von 29,8\% in Deutschland, ist das Entwickeln dieser App für eine reine i\gls{os}-Umgebung nicht sinnvoll. \newline
+
+Um Apps im Google Play Store zu veröffentlichen, wird eine einmalige Registrierungsgebühr von 25 US-Dollar benötigt \cite{misc:androiddeveloper}. Eine jährliche Gebühr ist 
+nicht vorhanden.
+
+React Native ermöglicht zwar das Entwickeln einer Anwendung für iOS und Android, jedoch werden nicht alle plattformspezifischen \glspl{api} unterstützt. Nicht unterstützte 
+\glspl{api} müssen in der nativen Programmiersprache erstellt werden. Es muss somit trotzdem für iOS und Android separat entwickelt werden. \cite{misc:reactnative_vs_native}\newline
+Die nicht vollständige Unterstützung nativer \glspl{api} ist eine Schwachpunkt aller Frameworks, welche das gleichzeitige Entwickeln für iOS und Android ermöglichen. \newline
+Xamarin bietet durch die Unterstützung von .Net und Microsoft Visual Studio die beste Entwicklungsumgebung. Jedoch mindert die geringe Popularität die Verfügbaren Hilfestellungen 
+durch andere Entwickler/-innen \cite{misc:flutter_reactnative_xamarin}. \newline
+Laut einer Umfrage von Stack Overflow ist Flutter das beliebteste der drei vorgestellten Frameworks \cite{misc:so_popularity}. Es ist jedoch auch das jüngste 
+(Version 1.0 im Jahr 2018) und kann somit auf den geringsten Anteil an verfügbaren Hilfestellungen zurückgreifen. Auch die Unterstützung durch Bibliotheken von Dritten ist 
+noch nicht so ausgererift, wie bei den anderen Frameworks. Allerdings steht eine gute Online-Dokumentation zur Verfügung, welche unter \cite{misc:flutter_docs} erreichbar ist.
+\cite{misc:flutter_reactnative_xamarin}
+
+Ein weiterer negativer Aspekt der Cross-Platform-Entwicklung sind Systemupdates von iOS oder Android. Ein Systemupdate kann neue Funktionen hinzufügen und alte Verändern 
+oder Entfernen. Während bei nativen Plattformen darauf geachtet wird, dass alle Änderungen rückwärtskompatibel sind, müssen sich Cross-Platform-Frameworks erst an die 
+Änderungen anpassen. Dadurch kann es während Übergangsphasen zu fehlerhaftem Verhalten der App kommen.
+
+In Anbetracht dieser Punkte ist das Entwickeln des Frontends als reine Android-App oder als plattformübergreifende App unter Verwendung eines Frameworks denkbar. Die Wahl fällt hierbei
+auf eine Cross-Platform-App, welche mithilfe von Flutter, und der damit verbundenen Programmiersprache Dart, erstellt wird. Dies begründet sich darin, dass bei einer reinen Android-
+Anwendung knapp ein Drittel der Smartphonebesitzer keinen Zugriff auf die App haben würden. Die Wahl von Flutter ergibt sich aus der guten Online-Dokumentation und der Popularität, 
+durch welche möglicherweise auftretende Probleme besser gelöst werden können.
