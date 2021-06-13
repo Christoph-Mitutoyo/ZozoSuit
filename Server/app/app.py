@@ -26,7 +26,6 @@ def zozomeasure():
     # convert RGB image to BGR for opencv
     cv2_img = cv2.cvtColor(tmp_img, cv2.COLOR_RGB2BGR)
     point_ids, confidences, positions, distances, raw_data = detect_points(cv2_img)
-    # Todo: raw_data => pose + betas
     render(gender, raw_data, len(raw_data))
     with open('output.glb', 'rb') as f:
         encoded = base64.b64encode(f.read())

@@ -6,4 +6,5 @@ imageio
 trimesh
 torch
 flask_json
+cryptography
 ./app/star
