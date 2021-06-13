@@ -70,6 +70,7 @@ flutter:
     - assets/models/
     - assets/res/
     - assets/model.glb
+    - model.glb
 
   # To add assets to your application, add an assets section, like this:
   # assets:

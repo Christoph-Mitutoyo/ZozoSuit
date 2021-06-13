@@ -129,14 +129,13 @@ class _FutureDisplayPictureScreenState
   }
 }
 
-readFilesFromCustomDevicePath() async {
+readFilesFromCustomDevicePath(File file) async {
   // Retrieve "External Storage Directory" for Android and "NSApplicationSupportDirectory" for iOS
   Directory directory = Platform.isAndroid
       ? await getExternalStorageDirectory()
       : await getApplicationSupportDirectory();
 
   // Create a new file. You can create any kind of file like txt, doc , json etc.
-  File file = await File("${directory.path}/model.glb").create();
 
   // Read the file content
   Uint8List fileContent = await file.readAsBytes();
@@ -152,16 +151,26 @@ void saveFile(Uint8List content) async {
       ? await getExternalStorageDirectory()
       : await getApplicationSupportDirectory();
   // String path = await _localPath;
+  // File file = await File("${directory.path}/model.glb").create();
   final _modelFile = File('${directory.path}/model.glb');
-  print("path: ${directory.path}");
+  _modelFile.create();
+  // check if file exists
+  final exists = _modelFile.existsSync();
+  // if (exists) {
+  //  await _modelFile.delete();
+  //  print("deleted file");
+  //}
+
+  print("path: ${_modelFile.path}");
   // final _textController = TextEditingController();
 
   // await _modelFile.writeAsString(_textController.text);
   // _textController.clear();
   await _modelFile.writeAsBytes(content);
-  // var check = await getFileData("${directory.path}/model.glb");
-  // print("check:$check");
-  readFilesFromCustomDevicePath();
+  await _modelFile.create();
+  //var check = await getFileData(_modelFile.path);
+  //print("check:$check");
+  readFilesFromCustomDevicePath(_modelFile);
 }
 
 Future<String> get _localPath async {
