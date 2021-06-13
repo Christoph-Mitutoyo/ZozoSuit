@@ -11,7 +11,7 @@ class TestViewModel extends StatelessWidget {
         appBar: AppBar(title: Text("Model Viewer")),
         body: ModelViewer(
           src:
-              '/storage/emulated/0/Android/data/com.example.untitled/files/output.glb',
+              '/storage/emulated/0/Android/data/com.example.untitled/files/model.glb',
           alt: "A 3D model of an astronaut",
           ar: true,
           autoRotate: true,

@@ -204,8 +204,8 @@ Base64Model parseModel(String responseBody) {
 
 Future<http.Response> createAlbum(String base64img) {
   print("sending....");
-  String url = 'https://10.0.2.2:5000/measure';
-  // String url = 'https://tkr.myqnapcloud.com/zozo/measure';
+  // String url = 'https://10.0.2.2:5000/measure';
+  String url = 'https://tkr.myqnapcloud.com/zozo/measure';
   return http.post(
     Uri.parse(url),
     headers: <String, String>{

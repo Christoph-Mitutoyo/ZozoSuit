@@ -28,17 +28,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cf75e2f5-4b54-42ea-a19f-07019a45ed30" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../zozoapp/assets/images/T.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../zozoapp/assets/res/TestBase64.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Test/untitled/lib/FutureDisplayPictureScreen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Test/untitled/lib/FutureDisplayPictureScreen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Test/untitled/lib/TestViewModel.dart" beforeDir="false" afterPath="$PROJECT_DIR$/Test/untitled/lib/TestViewModel.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test/untitled/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/Test/untitled/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[SerialNumber@RZ8MB14RXZY]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[VirtualDevicePath@D:\Benutzer\Christoph\.android\avd\Pixel_3a_API_29.avd]" />
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -143,45 +145,33 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="478" height="466" key="DebuggerActiveHint/0.0.1920.1040@0.0.1920.1040" timestamp="1623514162499" />
-    <state x="740" y="275" key="FileChooserDialogImpl" timestamp="1621931404252">
+    <state x="740" y="275" key="FileChooserDialogImpl" timestamp="1623574944556">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1621931404252" />
-    <state width="1877" height="245" key="GridCell.Tab.0.bottom" timestamp="1623514694586">
+    <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1623574944556" />
+    <state width="1877" height="245" key="GridCell.Tab.0.bottom" timestamp="1623574395148">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="245" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1623514694586" />
-    <state width="1877" height="245" key="GridCell.Tab.0.center" timestamp="1623514694586">
+    <state width="1877" height="245" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1623574395148" />
+    <state width="1877" height="245" key="GridCell.Tab.0.center" timestamp="1623574395148">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="245" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1623514694586" />
-    <state width="1877" height="245" key="GridCell.Tab.0.left" timestamp="1623514694585">
+    <state width="1877" height="245" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1623574395148" />
+    <state width="1877" height="245" key="GridCell.Tab.0.left" timestamp="1623574395148">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="245" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1623514694585" />
-    <state width="1877" height="245" key="GridCell.Tab.0.right" timestamp="1623514694586">
+    <state width="1877" height="245" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1623574395148" />
+    <state width="1877" height="245" key="GridCell.Tab.0.right" timestamp="1623574395148">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="245" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1623514694586" />
+    <state width="1877" height="245" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1623574395148" />
     <state x="461" y="165" key="SettingsEditor" timestamp="1622445323195">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="461" y="165" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1622445323195" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
-          <url>file://$PROJECT_DIR$/Test/untitled/lib/FutureDisplayPictureScreen.dart</url>
-          <line>160</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
-          <url>file://$PROJECT_DIR$/Test/untitled/lib/FutureDisplayPictureScreen.dart</url>
-          <line>163</line>
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <state x="542" y="203" key="new project wizard" timestamp="1623574989580">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="542" y="203" key="new project wizard/0.0.1920.1040@0.0.1920.1040" timestamp="1623574989580" />
   </component>
 </project>
