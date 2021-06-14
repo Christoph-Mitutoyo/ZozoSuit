@@ -74,7 +74,7 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
                     modelBase64 =
                         modelBase64.substring(2, modelBase64.length - 1);
                     var decoded = base64.decode(modelBase64);
-                    File modelFile = await saveFileReturnPath(decoded);
+                    File modelFile = await saveFileReturnFile(decoded);
 
                     print("finished");
                     // display model
@@ -101,7 +101,7 @@ Future<String> getFileData(String path) async {
   return await rootBundle.loadString(path);
 }
 
-Future<File> saveFileReturnPath(Uint8List content) async {
+Future<File> saveFileReturnFile(Uint8List content) async {
   // get directory for Android/IOS
   Directory directory = Platform.isAndroid
       ? await getExternalStorageDirectory()
