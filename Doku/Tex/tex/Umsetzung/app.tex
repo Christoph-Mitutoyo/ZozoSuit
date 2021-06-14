@@ -93,8 +93,8 @@ das zuvor aufgenommene Bild, sondern ein aus den, in der App enthaltenen, Assets
 
 Wird der Button gedrückt, so zeigt dieser eine Ladeanimation an, bis alle durch den Button aufgerufenen Funktionen abgeschlossen sind.
 
-Zuerst wird das aktuelle Bild zu einem Base64-String (\cite{misc:base64}) konvertiert. Der somit generierte String wird nun mit dem erhaltenen Geschlecht per POST-Request an den Server 
-gesendet. Der Server wertet die Daten aus und generiert daraus ein 3D-Modell als .glb-Datei. Diese Datei wird zu Base64 kodiert und an die App zurückgesendet. \newline
+Zuerst wird das aktuelle Bild zu einem Base64-String (\cite{misc:base64}) konvertiert. Der somit generierte String wird nun mit dem erhaltenen Geschlecht JSON-kodiert per POST-Request an den Server 
+gesendet. Der Server wertet die Daten aus und generiert daraus ein 3D-Modell als .glb-Datei. Diese Datei wird zu Base64 kodiert und JSON-kodiert an die App zurückgesendet. \newline
 Der Base64-String wird nun dekodiert und in dem appspezifischen Speicher gespeichert. Hierbei muss darauf geachtet werden, dass die Speicherorte auf Android und iOS Geräten 
 verschieden sind. Deshalb wird das Betriebssystem des Smartphones bestimmt und daraus lässt sich der Pfad zum Speicherort für appspezifische Dateien generieren. Die dekodierte Datei 
 wird nun an dem erhaltenen Pfad gespeichert. \newline
@@ -120,3 +120,31 @@ Der Button rechts unten lädt das Modell im von Google erstellten model-viewer, 
 \pagebreak
 \section{Probleme}
 
+\subsection{iOS}
+
+Damit Anwendungen für iOS Systeme kompiliert werden können, wird eine Apple-Umgebung (Macbook, \dots) benötigt. Da keiner der Entwickler Zugang zu solch einer Umgebung hat, konnte die 
+Release-Version der App für iOS nicht getestet werden.
+
+\subsection{Serverkommunikation}
+
+In den Anfangsphase der Entwicklung wurde der Server nur lokal per localhost betrieben. Somit konnte die App nicht mit dem eigenen Smartphone, sondern nur mit dem in Android Studio 
+enthaltenen Emulator betrieben werden. Dieser hat keinen Zugriff auf die normalerweise durch den localhost bereitgestellten Adressen. Android Studio umgeht dieses Problem, indem 
+localhost über eine andere Schnittstelle angesprochen werden kann. Die neue Adresse, über welche die Kommunikation zum localhost möglich ist, muss allerdings zuerst herausgefunden werden.
+
+Der vom Server zurückgesendete Base64-kodierte String bekommt aus unbekannten Gründen zusätzliche Zeichen am Anfang und Ende hinzu. Diese verhindern, dass der String dekodiert 
+werden kann. Das daraus resultierende Modell wäre nicht mehr das korrekte, vom Server gesendete, Modell. Zusätzlich entspricht der String nicht mehr den Base64-Konventionen und 
+sorgt somit für einen Error bei der Dekodierung. \newline
+Um dies zu umgehen wird der String am Anfang und Ende gekürzt und somit alle überschüssigen Symbole entfernt.
+
+Zu Beginn war der Server über eine http-Adresse erreichbar. Ab Android 9 werden allerdings jegliche Kommunikationsversuche mit einer unverschlüsselten (http) Adresse standardmäßig 
+blockiert. Somit konnten keine Daten gesendet oder empfangen werden. \newline
+In den Settings-Dateien von Android lässt sich die Kommunikation mit unverschlüsselten Adressen aktivieren. Dies ist auch im Hinblick auf Model Viewer sinnvoll, da das Plugin einen 
+http-Server erstellt. Das rendern der Modelle wäre somit ohne die Aktivierung der unverschlüsselten Kommunikation nicht möglich. \newline
+Zusätzlich wurde dem Server ein Zertifikat hinzugefügt, mit welchem das Betreiben eines https-Servers möglich ist.
+
+\subsection{Model Viewer}
+
+Model Viewer benutzt den Browser, um die 3D-Modelle zu ladden und anzuzeigen. Das Plugin unterstützt dabei aber nur die zwei aktuellsten Versionen der bekannten Browser 
+(Chrome, Edge, Firefox, Safari, \dots). Der von Android Studio bereitgestellte Emulator hat Chrome installiert, davon aber die Version 83. Die aktuelle Version von Chrome ist allerdings 
+91. Die auf dem Emulator verfügbare Version ist somit nicht von Model Viewer unterstützt. Wird versucht ein 3D-Modell anzuzeigen, so erscheint nur ein weißer Bildschirm. \newline
+Dies resultiert darin, dass alle Tests mit 3D-Modellen an einem echten Gerät durchgeführt werden müssen. Zusätzlich wird somit auch ein nicht lokal laufender Server benötigt.
