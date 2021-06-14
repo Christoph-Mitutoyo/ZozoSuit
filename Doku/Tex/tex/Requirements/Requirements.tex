@@ -1,8 +1,8 @@
 \chapter{Punkteermittlung}
 
 Bei der Punkteermittlung wird auf das \href{https://github.com/pinae/Zozo-Measurer}{Github-Repository von Pina Merkert} auf Basis von
-OpenCVund Numpy zurückgegriffen. Mit diesem können aus einem Bild mit einer Person. welche den Zozosuit trägt,
-dreidimensionale Messpunktkoordinaten, deren IDs sowie einige andere Parameter bestimmt werden. Im folgenden
+OpenCVund Numpy zurückgegriffen. Mit diesem können aus einem Bild mit einer Person, welche den Zozosuit trägt,
+dreidimensionale Messpunktkoordinaten, deren IDs sowie einige andere Parameter bestimmt werden. Im Folgenden
 wird die Funktionsweise grob skizziert.
 
 \section{Erkennung der Messpunkte}
@@ -56,22 +56,22 @@ Gaußfilter geglättet und weichgezeichnet, wie es auch bei der Zozosuit-Messfun
 \end{figure}
 
 Aus dem aufgearbeiteten, binären Bild werden in einem weiteren Schritt durch die OpenCV-Funktion \texttt{findContours(\dots)} die Konturen
-der Messpunkte ausgelesen. Unter einer Kontur bersteht man eine Kurve, die alle Punkte entlang einer Begrenzung verbindet, welche die gleiche 
-Farbe oder Itensität haben. \texttt{findContours(\dots)} gibt eine Liste von Konturen zurück, die allerdings nicht nur Messpunkte des Zozosuits
-umfasst, sondern auch ungewollte Konuren. Dementsprechend müssen ungewollte Konturen gefiltert werden. Vorerst erfolgt die Entfernung
-aller Konturen, die nicht in etwa zu der Größe der Messpunkte mit einem Durchmesser von 2 Centimetern passen. Konturen, die weder rund noch elliptisch sind,
-können ebensfalls aussortiert werden. Da weitere Verarbeitung mit sehr flachen Ellipsen fehleranfällig ist, werden elliptische Konturen,
-bei denene das Verhältnis von kürzestem Durchmesser zu längstem Durchmesser kleiner als $\frac{1}{10}$ ist, ebenfalls aussortiert. In einem
-letzten Schritt erfolgt die Transformation der Elipsen zu kreisen, da diese einfacher zu verarbeiten sind. Die Transformationsmatrix wird
+der Messpunkte ausgelesen. Unter einer Kontur versteht man eine Kurve, die alle Punkte entlang einer Begrenzung verbindet, welche die gleiche 
+Farbe oder Intensität haben. \texttt{findContours(\dots)} gibt eine Liste von Konturen zurück, die allerdings nicht nur Messpunkte des Zozosuits
+umfasst, sondern auch ungewollte Konturen. Dementsprechend müssen ungewollte Konturen gefiltert werden. Vorerst erfolgt die Entfernung
+aller Konturen, die nicht in etwa zu der Größe der Messpunkte mit einem Durchmesser von 2 Zentimetern passen. Konturen, die weder rund noch elliptisch sind,
+können ebenfalls aussortiert werden. Da weitere Verarbeitung mit sehr flachen Ellipsen fehleranfällig ist, werden elliptische Konturen,
+bei denen das Verhältnis von kürzestem Durchmesser zu längstem Durchmesser kleiner als $\frac{1}{10}$ ist, ebenfalls aussortiert. In einem
+letzten Schritt erfolgt die Transformation der Ellipsen zu kreisen, da diese einfacher zu verarbeiten sind. Die Transformationsmatrix wird
 mit der OpenCV-Funktion \texttt{getAffineTransform(\dots)} mit drei Punkten auf berechnet, dem Mittelpunkt, dem kurzen Scheitelpunkt sowie dem langen
 Scheitelpunkt. Nach der Transformation der Konturen mit der entsprechenden Transformationsmatrix ergibt sich eine Menge an Bildern der kreisförmigen Messpunkte 
 des Zozosuits.
 
 \section{Punkt auf Zozosuit}
 
-Für die Ermittlung der einzigartigen ID eines Messpunktes ist dessen Aufbau wichtig, welcher im folgenden beschrieben wird.
-Ein Messpunkt hat einen Durchmesser von 2 Centimetern, zudem existieren Messpunkte an Hals und Füßen, die nur einen Durchmesser
-von einem Centimeter haben, da diese jedoch keine ID haben, spielen sie hier keine Rolle. In jedem der circa 300 Messpunkten befindet
+Für die Ermittlung der einzigartigen ID eines Messpunktes ist dessen Aufbau wichtig, welcher im Folgenden beschrieben wird.
+Ein Messpunkt hat einen Durchmesser von 2 Zentimetern, zudem existieren Messpunkte an Hals und Füßen, die nur einen Durchmesser
+von einem Zentimeter haben, da diese jedoch keine ID haben, spielen sie hier keine Rolle. In jedem der circa 300 Messpunkten befindet
 sich eine Anordnung von 4 bis 10 kleinen Pünktchen mit einem Durchmesser von 2 Millimeter, welche eine einzigartige ID wie folgt widerspiegeln, sowie ein
 Pünktchen im Mittelpunkt.
 \begin{figure}[t]
@@ -81,31 +81,31 @@ Pünktchen im Mittelpunkt.
     \caption{Aufbau eines Messpunktes des Zozosuits \cite{Pina:2018}}
 \end{figure}
 In einem Messpunkt befinden sich je 6 mögliche Positionen für Pünktchen auf einem Kreis mit dem Radius von 4 Millimeter und einem Winkel von 60° zum 
-Nachbarn. Weitere 6 mögliche Positionen befinden sich auf einem Kreis mit dem Radius von etwa 6.93 Millimetern, ebenfalls mit einem WInkel von 60° zudem
+Nachbarn. Weitere 6 mögliche Positionen befinden sich auf einem Kreis mit dem Radius von etwa 6,93 Millimetern, ebenfalls mit einem Winkel von 60° zudem
 Nachbarn, allerdings um 30° zu jenen Positionen im inneren Kreis (vgl. Abb. \ref{fig:zozopunnkt}).
 
 So ergeben sich insgesamt 12 mögliche Positionen für Pünktchen, welche je ein Bit kodieren. Existiert ein Pünktchen auf einer Position,
 ist der Bitwert 1, ansonsten. Dies ergibt eine $2^12=4096$ möglichen Punkteanordnungen. Die Pünktchen des äußeren Kreises kodieren im
-Uhrzeigsinn gehend, beginnend beim Pünktchen im Norden, die ersten 6 Bits. D Pünktchen im inneren Kreis stellen im Uhrzeigersinn gehen, angefangen
-beim Pünktchen um 30° im Uhrzeigsinn verschoben zum Norden, die zweiten 6 Bit dar. Allerdings müssen sich bei jedem Messpunkt 
+Uhrzeigersinn gehend, beginnend beim Pünktchen im Norden, die ersten 6 Bits. D Pünktchen im inneren Kreis stellen im Uhrzeigersinn gehen, angefangen
+beim Pünktchen um 30° im Uhrzeigersinn verschoben zum Norden, die zweiten 6 Bit dar. Allerdings müssen sich bei jedem Messpunkt 
 sowohl auf dem inneren Kreis als auch dem 
 äußeren Kreis mindesten 2 und maximal 5 Pünktchen befinden. Da die Messpunkte in der Wirklichkeit (um 60°,120°,180°,240°,300°) verdreht sein können, werden zudem nur jene der
 6 möglichen Punkteanordnung gezählt, deren 12 Bit die höchste Zahl kodieren. Diese beiden Einschränkungen ergeben eine Anzahl von 608 einzigartigen
-IDs für die 2 Centimeter großen Messpunkte. \cite{Pina:2018}
+IDs für die 2 Zentimeter großen Messpunkte. \cite{Pina:2018}
 
 \section{Erkennung der ID}
 
 Für die Erkennung der ID eines Messpunktes auf dem Zozosuit muss dieser zuerst in eine Position gedreht werden, sodass die Positionen
-der Pünktchen mit jene in Abbildung \ref{fig:zozopunnkt} übereinstimmen. Hierbei wird eine Maske mit den 12 möglichen Punktepositionen
+der Pünktchen mit jenen in Abbildung \ref{fig:zozopunnkt} übereinstimmen. Hierbei wird eine Maske mit den 12 möglichen Punktepositionen
 erzeugt über dem Messpunkt erzeugt und 60 Mal um 1° verschoben. Ist diese Maske so gedreht wie die tatsächlich vorhandenen Pünktchen 
 im Messpunkt, haben die maskierten Pixel eine kleinere durchschnittliche Helligkeit als alle Masken mit abweichendem Winkel. 
 Mit dem nun richtig gedrehten Messpunkt kann die ID ermittelt werden. Hier werden 12 Masken, die je eine der 12 Punkteposition freistellen,
-über den Messpunkt gelegt. Liegt der durchschnittliche Farbwert der so freigestellten Punkteposition über dem Mittelwert von 127, wird davon ausgeganen,
+über den Messpunkt gelegt. Liegt der durchschnittliche Farbwert der so freigestellten Punkteposition über dem Mittelwert von 127, wird davon ausgegagnen,
 dass sich auf dem Messpunkt an dieser Stelle ein Pünktchen befindet, was als binäre 1 interpretiert wird. Liegt der durchschnittliche Farbwert
 unter dem Mittelwert von 127, befindet sich an dieser Stelle kein Pünktchen und der binäre Wert wird auf 0 gesetzt. Dieser Vorgang wird 12 Mal wiederholt,
 sodass jeder Punktepositionen ein binärer Wert zugewiesen wird. \cite{Pina:2018}
 
 Zusammengesetzt ergibt sich dadurch eine 12-Bit ID. Da jedoch 5 weitere mögliche Ausrichtungen des Punktes möglich sind, und die IDs 
 konsistent sein sollen, wird wie im letzten Kapitel beschrieben immer nur die höchst mögliche ID der 6 verschiedenen Drehungen der Punkteanordnung
-verwendet. Hierbei wird 6 Mal je auf die ersten und letzten 6 Bit ein Bitshift nach links durchgeführt, das 1. Bit an die 7. Position kopiert und
-und das 1. Bit gelöscht. Der höchste enstehende binäre Werte ist die ID des Punktes. \cite{Pina:2018}
+verwendet. Hierbei wird 6 Mal je auf die ersten und letzten 6 Bit ein Bitshift nach links durchgeführt, das 1. Bit an die 7. Position kopiert
+und das 1. Bit gelöscht. Der höchste entstehende binäre Werte ist die ID des Punktes. \cite{Pina:2018}

@@ -1,379 +1,610 @@
 
-Evaluierung von Tools zu mAuffinden von Undefined Behavior T3000 des
+Die Vermessung des Körpers mit dem ZOZOSUIT Studienarbeit des
 Studiengangs Informatik an der Dualen Hochschule BadenWürttemberg
-Stuttgart von Christoph Böhringer 21.06.2021 Matrikelnummer, Kurs:
-3275565, TINF18IN Ausbildungsfirma: Mitutoyo CTL Germany GmbH Betreuer:
-Dipl.Inform. (FH) Thomas Weller
+Stuttgart von Christoph Böhringer, Tobias Krämer 14.06.2021
+Matrikelnummer, Kurs: 3275565, , TINF18IN Betreuer: Martin Kissel
 
-Erklärung Ich versichere hiermit, dass ich meine Thesis mit dem Thema
-Evaluierung von Tools zum Auffinden von Undefined Behavior 
-selbstständig verfasst und keine anderen als die angegebenen Quellen und
-Hilfsmittel benutzt habe. Ich versichere zudem, dass die eingereichte
-elektronische Fassung mit der gedruckten Fassung übereinstimmt. Falls
-gleichwertige Entscheidungen getroffen werden mussten, wurden diese von
-mir entschieden, außer es ist anders angegeben. Ort, Datum Unterschrift
-I
+Erklärung Wir versicheren hiermit, dass wir unsere Studienarbeit mit dem
+Thema „Die Vermessung des Körpers mit dem ZOZOSUIT“ selbstständig
+verfasst und keine anderen als die angegebenen Quellen und Hilfsmittel
+benutzt habe. Wir versicheren zudem, dass die eingereichte elektronische
+Fassung mit der gedruckten Fassung übereinstimmt. Falls gleichwertige
+Entscheidungen getroen werden mussten, wurden diese von uns entschieden,
+außer es ist anders angegeben. Ort Datum Christoph Böhringer, Tobias
+Krämer I
 
-Abstract In einem Softwareprodukt trat bei der Umstellung von 32 Bit auf
-64 Bit ein Fehler auf, dessen Ursache sich vermutlich auf Undefined
-Behavior von C++ zurückführen lässt. Diese Arbeit soll den Nachweis
-erbringen oder widerlegen, dass Undefined Behavior die Ursache für den
-Fehler war. Optional kann eine mögliche Erklärung gesucht werden, warum
-der betroffene Code in der 32 Bit Version keinen Fehler verursacht hat.
-Das betroffene Projekt wurde vor der Umstellung mehrere Jahre lang nicht
-verändert. Es muss daher davon ausgegangen werden, dass sich ähnliche
-Fehler damals auch an anderen Stellen eingeschlichen haben, jedoch noch
-nicht bemerkt wurden. Die Arbeit soll untersuchen, ob weitere Fehler vom
-Typ Undefined Behavior in diesem Projekt vorliegen. Um Fehler dieser Art
-auch in anderen Projekten auszuschließen, sollen Tools gesucht und
-evaluiert werden, mit denen die Fehler automatisiert gefunden und
-berichtet werden können. Falls kein passendes Tool existiert, soll
-aufgezeigt werden, mit welchem manuellen Vorgehen solche Stellen erkannt
-werden können. Die Tools sollen möglichst mit den bestehenden
-Entwicklungsumgebungen verwendet werden können und idealerweise alle
-Arten von Undefined Behavior erkennen. Hinweis: Da in der Arbeit
-vermutlich Source Code der Mitutoyo CTL Germany GmbH offengelegt wird,
-ist die Arbeit unter Verschluss zu halten. II
+Abstract This project describes the ZOZOSUIT and develops an app that
+allows users to take one picture of their body and receive a 3Dmodel
+according to their picture. This replicates the original app created by
+ZOZO inc. in 2018. To accomplish this a mobile app using Flutter is
+developed along with a server that receives the picture and extracts
+measurement points. These points are then used to create the model. The
+server returns the model to the app, which then renders and displays it.
+II
 
-Inhaltsverzeichnis Abstract II Abbildungsverzeichnis IV
-Tabellenverzeichnis V 1 Anhang 1 1.1 WinDbg Crash Analyse 1 1.1.1
-Grundlegende Prüfungen 1 1.1.2 Symbole 2 1.1.3 Exception Analyse 5 1.1.4
-Extraktion von Daten für einen Unit Test 7 1.1.5 Unit Test 10 1.1.6
-Mögliche Herkunft von NaN 11 1.2 Build Instructions 13 1.2.1 WinDbg
-Crash Analyse 13 1.2.2 Kompilieren von Mitutoyo.MCOSMOS.BasicLibs 14 III
+Inhaltsverzeichnis Abstract II Abbildungsverzeichnis V
+Tabellenverzeichnis VI Abkürzungen VII Glossar VIII 1 Einleitung 1 2
+ZOZO 2 2.1 Das Unternehmen ZOZO 2 2.2 Der ZOZOSUIT 3 2.3 ZOZOSUIT 2 4 3
+Stand der Technik 6 3.1 Frontend 6 4 Punkteverarbeitung 9 4.1 STAR 9 III
 
-Abbildungsverzeichnis 1.1 Hier den Eintrag ändern 14 IV
+4.1.1 Shape 10 4.1.2 Pose 11 4.1.3 Funktionsweise 12 4.2 Verarbeiung 14
+4.2.1 Idee 14 4.2.2 Umsetzung 15 4.2.3 Probleme 16 5 App 20 5.1 Aufbau
+20 5.2 MainScreen 21 5.3 SelectBodyTypeScreen 23 5.4 TakePictureScreen
+24 5.5 DisplayPictureScreen 25 5.6 ViewModelScreen 27 5.7 Probleme 28
+5.7.1 iOS 28 5.7.2 Serverkommunikation 28 5.7.3 Model Viewer 29 6
+Zusammenfassung und Ausblick 30
 
-Tabellenverzeichnis V
+Abbildungsverzeichnis 2.1 Der ZOZOSUIT, Bildquelle: [ 3 ] 3 2.2
+Bildquelle: [ 6 ], [ 7 ] 4 4.1 Gerenderte Modelle mit verschiedenen
+ShapeParametern 10 4.2 Gelenke des STARModells (a) und
+AxisAngleDarstellung einer Rotation [ 18 ] (b) 11 4.3 Gerenderte Modelle
+mit verschiedenen PoseParametern 12 4.4 Vergleich von Joints des
+StarModells und Punkten des Zozosuits mit IDs in Gelb 15 4.5 Vergleich
+von Joints des StarModells und Punkten des Zozosuits mit IDs in gelb 17
+5.1 Programmablauf der App 20 5.2 Der Mainscreen der App 21 5.3
+ErrorMessage 22 5.4 Auswahl des Körpertyps 23 5.5 Aufnehmen eines Bildes
+24 5.6 Anzeigen des aufgenommenen Bildes 25 5.7 Anzeigen des 3DModells
+27 V
 
-Kapitel 1 Anhang 1.1 WinDbg Crash Analyse Vom betroffenen Absturz, der
-womöglich auf Undefined Behavior zurückzuführen ist, wurde ein Crash
-Dump erstellt. Dieser Anhang beschreibt anhand einer aufgezeichneten
-Logdatei, welche Befehle genutzt wurden, um den Crash Dump zu
-analysieren. Bei der analysierten Datei handelt es sich um einen Crash
-Dump mit vollständig enthaltenem Speicherinhalt. Die Datei ist ca. 1 GB
-groß. Die hier beschriebene Analyse wurde von Mitarbeitern des CTL
-durchgeführt und für die Studienarbeit zur Verfügung gestellt. 1.1.1
-Grundlegende Prüfungen 0:000> || . 0 Full memory user mini dump: D: \
-MINIDUMP 2 0201217 15 0359.DMP Dem Dateinamen nach wurde der Crash Dump
-am 17.12.2020 um 15:03:59 Uhr UTC geschrieben. Die Zeitangabe innerhalb
-des Crash Dumps bestätigt dies. 1
+Tabellenverzeichnis VI
 
-0:000> .time Debug session time: Thu Dec 17 16 :04:00.000 2 020 ( UTC +
-1 :00 ) System Uptime: 0 days 7 :25:08.968 Process Uptime: 0 days
-0:01:31.000 Kernel time: 0 days 0:00:32.000 User time: 0 days
-0:00:48.000 Der Bug wurde am 27.11.2020 berichtet und am 11.12.2020
-erstmals bestätigt. Beim vorliegenden Crash Dump handelt es sich also um
-die Reproduktion des Fehlers zu einem späteren Zeitpunkt. 0:000> | . 0
-id: 2 b7c examine name: C: \ MCOSMOSx64 \ EXE \ GEOPAK64.exe Das
-ausgeführte Programm stimmt mit dem des Fehlerberichts überein. 0:000>
-.exr 1 *** WARNING: Unable to verify checksum for MnGeom364.dll
-ExceptionAddress: 00007ff995c1d48e (
-MnGeom364!tg_ajc_lin_int+0x000000000000014e ) ExceptionCode: c0000005 (
-Access violation ) ExceptionFlags: 00000000 NumberParameters: 2
-Parameter [ 0 ] : 0000000000000000 Parameter [1] : 0000000000000000
-Attempt to read from address 0000000000000000 Der Fehlercode und das
-fehlerhafte Modul stimmen ebenfalls mit dem des Fehlerberichts überein.
-Es kann also eine detailliertere Analyse durchgeführt werden. 1.1.2
-Symbole Für eine weitere Analyse ist das Vorhandensein von Symbolen
-erforderlich. Manche Symbole wurden zusammen mit dem Crash Dump
-abgelegt. Diese Symbole sollten zuerst berücksichtigt werden und müssen
-zuerst in den Symbolpath aufgenommen 2
+Abkürzungen API Application Programming Interface OS Operating System
+SDK Software Development Kit UI User Interface VII
 
-werden. 0:000> .sympath " D: \ temp \ Bug 32147 " Symbol search path is:
-D: \ temp \ Bug 32147 Expanded Symbol search path is: d: \ temp \ bug
-32147 ************* Path validation summary ************** Response Time
-( ms ) Location OK D: \ temp \ Bug 32147 Leider stimmen bei den Symbolen
-die Zeitstempel nicht überein, so dass die Symbole nicht geladen werden
-können. Die Prüfung des Zeitstempels kann jedoch ausgeschaltet werden.
-0:000> .symopt+ 0x40 Symbol options are 0x30377: 0x00000001 -
-SYMOPT_CASE_INSENSITIVE 0x00000002 - SYMOPT_UNDNAME 0x00000004 -
-SYMOPT_DEFERRED_LOADS 0x00000010 - SYMOPT_LOAD_LINES 0x00000020 -
-SYMOPT_OMAP_FIND_NEAREST 0x00000040 - SYMOPT_LOAD_ANYTHING 0x00000100 -
-SYMOPT_NO_UNQUALIFIED_LOADS 0x00000200 - SYMOPT_FAIL_CRITICAL_ERRORS
-0x00010000 - SYMOPT_AUTO_PUBLICS 0x00020000 - SYMOPT_NO_IMAGE_SEARCH
-Weitere Symbole können vom Azure DevOps Server geladen werden 0:000>
-.sympath+ srv * d: \ debug \ symbols *\\ tfs - build 2 014 \ SymbolStore
-\ Mitutoyo.MCOSMOS.BasicLibs_Release_NuGet Symbol search path is: D: \
-temp \ Bug 32147; srv * d: \ debug \ symbols *\\ tfs - build 2 014 \
-SymbolStore \ Mitutoyo.MCOSMOS.BasicLibs_Release_NuGet Expanded Symbol
-search path is: d: \ temp \ bug 32147; srv * d: \ debug \ symbols *\\
-tfs - build 2 014 \ symbolstore \
-mitutoyo.mcosmos.basiclibs_release_nuget ************* Path validation
-summary ************** Response Time ( ms ) Location OK D: \ temp \ Bug
-32147 Deferred srv * d: \ debug \ symbols *\\ tfs - build 2 014 \
-SymbolStore \ Mitutoyo.MCOSMOS.BasicLibs_Release_NuGet Und letztlich
-muss der Microsoft Server abgefragt werden, damit die Funktionen des
-Betriebssystems korrekt aufgelöst werden können. 3
+Glossar VIII
 
-0:000> .symfix+ d: \ debug \ symbols Nach dem Ändern der möglichen
-Quellen für Symbole muss dem Debugger mitgeteilt werden, dass er seine
-Informationen aktualisiert. 0:000> .reload / f . *** WARNING: Unable to
-verify checksum for GEOPAK64.exe ....... *** WARNING: Unable to verify
-checksum for GeoWinBinToAsc64.dll ..... *** WARNING: Unable to verify
-checksum for Mafis_3DCmp64.dll ....... *** WARNING: Unable to verify
-checksum for MnGeoWnListCtrl64.dll . *** WARNING: Unable to verify
-checksum for MnRecordPoints64.dll . *** WARNING: Unable to verify
-checksum for UncertaintyCalculator64.dll .. Press ctrl - c ( cdb, kd,
-ntsd ) or ctrl - break ( windbg ) to abort symbol loads that take too
-long. Run !sym noisy before .reload to track down problems loading
-symbols. [ ... ] Loading unloaded module list ..........................
-************* Symbol Loading Error Summary ************** Module name
-Error WkWin64 The system cannot find the file specified GeoWinBinToAsc64
-The system cannot find the file specified [ ... ] You can troubleshoot
-most symbol related issues by turning on symbol loading diagnostics (
-!sym noisy ) and repeating the command that caused symbols to be loaded.
-You should also verify that your symbol search path ( .sympath ) is
-correct. Anhand der beiden bekannten und für die Fehleranalyse
-notwendigen Module Geopak und MnGeom3 kann überprüft werden, ob die
-Symbole korrekt geladen wurden. 0:000> lm m geopak * Browse full module
-list start end module name 00007ff7 ` fa2d0000 00007ff7 ` fc142000
-GEOPAK64 C ( private pdb symbols ) d: \ temp \ bug 32147\ GEOPAK64.pdb
-0:000> lm m mngeom364 4
+Kapitel 1 Einleitung Die ZOZOSUIT ist ein Ganzkörperanzug mit
+gleichmäßig verteilten Punkten. Mit diesem Anzug und einer dazugehörigen
+App können Nutzer, nach Aufnehmen eines 360GradBildes, die Maße ihres
+Körpers und ein entsprechendes 3DModell erhalten. Das Unternehmen ZOZO
+inc., welches den Anzug auf den Markt brachte, stellte die Produktion
+des ZOZOSUIT, sowie die App, kurz nach der veröentlichung wieder ein.
+Diese Studienarbeit soll sich mit dem Entwurf einer App beschäftigen,
+welche die Funktion der ZOZOSUIT repliziert. Es soll eine Anwendung
+entwickelt werden, welche aus einem Foto einer Person im ZOZOSUIT ein
+3DModell dieser Person generiert. 1
 
-Browse full module list start end module name 00007ff9 `95 c00000
-00007ff9 `95 c2c000 MnGeom364 C ( private pdb symbols ) d: \ temp \ bug
-32147\ MnGeom364.pdb Für beide Module sind Symbole mit Informationen zu
-privaten Methoden etc. vorhanden. 1.1.3 Exception Analyse Wie bereits
-bei den grundlegenden Prüfungen gesehen, handelt es sich beim Absturz um
-eine Access Violation, also eine Art NullPointerException. Nach dem
-Einstellen der Symbole verschwindet allerdings die Warnung. 0:000> .exr
-1 ExceptionAddress: 00007ff995c1d48e (
-MnGeom364!tg_ajc_lin_int+0x000000000000014e ) ExceptionCode: c0000005 (
-Access violation ) ExceptionFlags: 00000000 NumberParameters: 2
-Parameter [ 0 ] : 0000000000000000 Parameter [1] : 0000000000000000
-Attempt to read from address 0000000000000000 Der Callstack liefert
-nicht die richtigen Angaben 0:000> k # Child - SP RetAddr Call Site 00
-00000056 `12337 058 00000193 `813 b1bec ntdll!NtGetContextThread+0x14 01
-00000056 `12337 060 0000001f ` 00000002 0x00000193 `813 b1bec 02
-00000056 `12337 068 0000003e ` 0000003e 0x0000001f ` 00000002 03
-00000056 `12337 070 00009c67 ` 02cb62cf 0x0000003e ` 0000003e 04
-00000056 `12337 078 00009c67 ` 02cb7d3f 0x00009c67 ` 02cb62cf 05
-00000056 `12337 080 00000000 ` 00000000 0x00009c67 ` 02cb7d3f Dies
-bedeutet, dass der Kontext noch nicht auf die Exception gesetzt ist. 5
+Kapitel 2 ZOZO 2.1 Das Unternehmen ZOZO ZOZO inc. ist ein japanisches
+Unternehmen, welches von Yusaku Maezawa im Jahr 1998 unter dem Namen
+„Start today“ gegründet wurdet. Damals verkaufte das Unternehmen
+importierte CDs und Schallplatten. Das Unternehmen eröffnet im Jahr 2004
+den OnlineShop ZOZOTOWN und stellt zwei Jahre später den verkauf
+importierter CDs komplett ein. Im Lauf der Jahre wurde der OnlineSohp
+immer weiter erweitert und weitere Unternehmen wurden in ZOZO inc.
+aufgenommen. Im Jahr 2018 veröentlichte das Unternehmen den ZOZOSUIT.
+Ein Anzug und eine dazugehörige App, mit welcher der eigene Körper
+gemessen werden kann. Mithilfe dieser Daten konnten Nutzer
+maßgeschneiderte Kleidung im OnlineShop bestellen. Heute hat das
+Unternehmen 1297 Mitarbeiter und macht einen jährlichen Umsatz von 1,1
+Billionen Dollar [ 1 ].[ 2 ] 2
 
-0:000> .ecxr rax = 0000000000000000 rbx = 000000561233b3f8 rcx =
-000000561233af18 rdx = ffffffffffffffe0 rsi = 000000561233b490 rdi =
-000000561233b470 rip = 00007ff995c1d48e rsp = 000000561233afe0 rbp =
-000000561233b0e0 r8 = 00000193a1a21c90 r9 = 0000000000000014 r10 =
-000000000000003c r11 = 000000561233afd0 r12 = 00000193a1a21c90 r13 =
-000000561233b608 r14 = 0000000000000014 r15 = 0000000000000001 iopl = 0
-nv up ei pl nz na pe nc cs = 0033 ss = 002b ds = 002b es = 002b fs =
-0053 gs = 002b efl = 00010202 MnGeom364!tg_ajc_lin_int+0x14e: 00007ff9
-`95 c1d48e 0f1000 movups xmm0,xmmword ptr [ rax ] ds:00000000 ` 00000000
-= ???????????????????????????????? Nach dem Setzen des Kontexts wird die
-Methode tg_ajc_lin_int auf dem Stack erkannt. 0:000> k Lb *** Stack
-trace for last set context - .thread / .cxr resets it # Child - SP
-RetAddr Call Site 00 00000056 `1233 afe0 00007ff9 `95 c1d8b8
-MnGeom364!tg_ajc_lin_int+0x14e [ d: \ gitrepos \
-mitutoyo.mcosmos.basicslibs \ source \ mngeom3 \ tg_geom.c @ 955] 01
-00000056 `1233 b350 00007ff9 `95 c1fefb MnGeom364!tg_ajc_lin_rl+0xd8 [
-d: \ gitrepos \ mitutoyo.mcosmos.basicslibs \ source \ mngeom3 \
-tg_geom.c @ 993] 02 00000056 `1233 b560 00007ff7 ` fae310df
-MnGeom364!tg_inn_ajc_lin+0x2b [ d: \ gitrepos \
-mitutoyo.mcosmos.basicslibs \ source \ mngeom3 \ tg_geom.c @ 1 026 ] 03
-00000056 `1233 b6b0 00007ff7 ` fae4a291 GEOPAK64!pel_line+0x77f [ g: \
-git \ mcosmos50 \ geopak \ source \ geopak \ pelmadcp.cpp @ 5498] 04
-00000056 `1233 bf00 00007ff7 ` fae49687
-GEOPAK64!pelm_comp_elem_intern+0xc01 [ g: \ git \ mcosmos50 \ geopak \
-source \ geopak \ pelmadcp.cpp @ 8255] 05 00000056 `1233 e730 00007ff7 `
-fa7f5a88 GEOPAK64!pelm_comp_elem+0x77 [ g: \ git \ mcosmos50 \ geopak \
-source \ geopak \ pelmadcp.cpp @ 8651] 06 00000056 `1233 e790 00007ff7 `
-fa920b77 GEOPAK64!fctctr_cpnt_end+0x748 [ g: \ git \ mcosmos50 \ geopak
-\ source \ geopak \ fctctrmngr.cpp @ 1376] 07 00000056 `1233 efe0
-00007ff7 ` fa91d26c GEOPAK64!fctmngr_wrk_fct+0x1177 [ g: \ git \
-mcosmos50 \ geopak \ source \ geopak \ fct_mngr.cpp @ 1314] 08 00000056
-`1233 f070 00007ff7 ` faaf8df3 GEOPAK64!fctmngr_wrk+0x68c [ g: \ git \
-mcosmos50 \ geopak \ source \ geopak \ fct_mngr.cpp @ 1924] 09 00000056
-`1233 f120 00007ff7 ` fabd9301 GEOPAK64!CGeopakDoc::PartProgCmdWrk+0x13
-[ g: \ git \ mcosmos50 \ geopak \ source \ geopak \ geopakdoc.cpp @
-3711] 0a 00000056 `1233 f150 00007ff9 ` ab5287f9
-GEOPAK64!CMainFrame::OnMsgNvUserEvent+0x281 [ g: \ git \ mcosmos50 \
-geopak \ source \ geopak \ mainfrm.cpp @ 2215] Ausgehend von einer
-Nutzerinteraktion (OnMsgNvUserEvent) werden mehrere Methoden 6
+2.2 Der ZOZOSUIT Abbildung 2.1: Der ZOZOSUIT, Bildquelle: [ 3 ] Der
+ZOZOSUIT ist ein enger Ganzkörperanzug mit gleichmäßig verteilten
+Punkten. Der Anzug wurde kostenlos an interessierte Menschen in der
+gesamten Welt versendet. Zu dem Suit gehört eine App, mit welcher Nutzer
+ein 360GradBild von sich selbst im ZOZOSUIT machen. Die App erkennt die
+auf dem ZOZOSUIT angebrachten Punkte und berechnet daraus die Maße
+des/der Trägers/in. Die berrechneten Maße können Nutzer hochladen und
+mit diesen Kleidung bei ZOZO inc. bestellen. Das Unternehmen versprach
+dabei, dass die bestellte Kleidung auf den Benutzer maßgeschneidert ist
+und innerhalb von zwei Wochen weltweit geliefert wird. In der Realität
+Betrug die Lieferzeit teils mehrere Monate. Zudem war die erhaltene
+Kleidung nicht passgenau. Dies sorgte für Enttäuschung und Unverständnis
+bei den Kunden, und als Resultat fiel der Wert von ZOZOAktien um circa
+50% [ 4 ]. [ 5 ] In Japan wurde die Benutzung des ZOZOSUIT bereits Ende
+2018 abgeschafft und das Unternehmen entschuldigte sich für die große
+Enttäuschung. Allerdings konnten die von Nutzern hochgeladenen
+Körperdaten weiterhin verwendet werden. Die Daten von millionen
+verschiedenster Körpertypen konnte ZOZO inc. dazu verwenden, die
+Produktion von nicht maßgeschneiderten Klamotten anzupassen. Somit 3
 
-aufgerufen, die dann zum Absturz führen. 1.1.4 Extraktion von Daten für
-einen Unit Test Der Code der betroffenen Stelle aus TG_GEOM.C, Commit
-f5d4dbb8. 937 INTERN MinMaxDist_T tg_ajc_lin_int ( UInt4 ulNoofPnts ,
-938 VecR8 LP aPoints , 939 const VecR8 LP pMatDir , 940 VecR8 LP pLoc ,
-941 VecR8 LP pDir , 942 Bool DirLam , 943 Bool bFitLin ) 944 /*
-************************************************************************
-945
-************************************************************************
-*/ 946 { Real8 Tmp , Dist , MxD = 0.0; 947 Bool bCond ; 948 VecR8
-Extremum , SupPnt = NVecR8 , MatDir = * pMatDir , Dir = * pDir , Loc = *
-pLoc , LocBord ; 949 MinMaxDist_T Local = {0.0, 0.0, 0.0, NULL , NULL },
-LocalBord = {0.0, 0.0, 0.0, NULL , NULL }; 950 UInt4 uMaxRep = 1; 951
-952 if ( ulNoofPnts <3) return Local ; 953 pln_para_pnt (& MatDir , &
-Dist , & Loc ); 954 Local = min_max_dist_pln (& MatDir , Dist ,
-ulNoofPnts , aPoints ); 955 Extremum = ( bFitLin ) ? * Local . MinPnt :
-* Local . MaxPnt ; 956 if ( bord_lin (& Loc , & Dir , & MxD , & Extremum
-, & SupPnt , ulNoofPnts , aPoints , DirLam )) 957 { 958 do { 959 LocBord
-= Loc ; 960 Extremum = SupPnt ; uMaxRep ++; 961 MatDir = vec_norm (
-vec_vec_prod ( Dir , vec_vec_prod ( MatDir , Dir )), & Tmp ); 962
-pln_para_pnt (& MatDir , & Dist , pLoc ); 963 LocalBord =
-min_max_dist_pln (& MatDir , Dist , ulNoofPnts , aPoints ); 964 bCond =
-bord_lin (& Loc , & Dir , & MxD , & Extremum , & SupPnt , ulNoofPnts ,
-aPoints , DirLam ); 965 if ( bCond && ( LocalBord . MinMax < Local .
-MinMax )) 966 { * pDir = Dir ; * pLoc = Loc ; Local = LocalBord ;} 967 }
-968 while ( 969 bCond && 970 ( uMaxRep < ulNoofPnts ) && 971 (
-bg_dist_pntpnt ( LocBord , Loc ) > TG_EPS_PLN ) 972 ); 973 } 974 return
-Local ; 975 } 7
+wurde die Passgenauigkeit der von ZOZO produzierten Klamotten für den
+Durchschnitt der Bevölkerung erhöht. 2.3 ZOZOSUIT 2 (a) Der ZOZOSUIT 2
+(b) Ausgewertete Punkte Abbildung 2.2: Bildquelle: [ 6 ], [ 7 ] Der
+ZOZOSUIT 2 verspricht das gleiche wie der ZOZOSUIT: ein hautenger Anzug
+mit gleichmäßigen Punkten und eine dazugehörige App, welche diese
+auswertet und anschließend ein 3DModell des Körpers anzeigt. Der
+ZOZOSUIT 2 besitzt im Vergleich zur ZOZOSUIT 50 mal mehr erkennbare
+Punkte. Zudem sind, laut Angaben von ZOZO inc. die zur Auswertung
+verwendeten Algorythmen verbessert worden. Zudem ist der Abstand der
+Punkte, welche zur Identifizierung der eigentlichen Messpunkte benötigt
+werden, von 0,2mm auf 0,4mm erhöht worden. Dies 4
 
-Da der betroffene Code vor der Umstellung auf 64 Bit 12 Jahre lang nicht
-verändert wurde, wurde angenommen, dass nicht die Methode selbst,
-sondern die übergebenen Parameter für den Absturz verantwortlich sind.
-Diese Daten können extrahiert werden. 0:000> .frame 0 00 00000056 `1233
-afe0 00007ff9 `95 c1d8b8 MnGeom364!tg_ajc_lin_int+0x14e [ d: \ gitrepos
-\ mitutoyo.mcosmos.basicslibs \ source \ mngeom3 \ tg_geom.c @ 955] Der
-Befehl .frame wechselt zu einem bestimmten Stackframe, hier dem
-obersten. 0:000> dv ulNoofPnts = 0x14 aPoints = 0x00000193 ` a1a21c90
-pMatDir = < value unavailable> pLoc = 0x00000056 `1233 b470 pDir =
-0x00000056 `1233 b490 DirLam = True ( 0n1 ) bFitLin = True ( 0n1 )
-Extremum = < value unavailable> Loc = struct VecR8 LocalBord = < value
-unavailable> Dist = < value unavailable> bCond = < value unavailable>
-MatDir = struct VecR8 MxD = 0 SupPnt = struct VecR8 Dir = struct VecR8
-Tmp = 0 uMaxRep = 1 LocBord = < value unavailable> Aus dieser Ausgabe
-lassen sich bereits ulNoofPoints, DirLam und bFitLin entnehmen. Die
-Variable bFitLin ist true, d.h. in Zeile 955 wird *Local.MinPnt
-dereferenziert. Dieser Wert wurde in Zeile 949 mit NULL initialisiert
-und seither offenbar nicht geändert. 0:000> dD / c 3 0x193a1a21c90 L0n60
-00000193 ` a1a21c90 1 0 0.03674 0 00000193 ` a1a21ca8 9 0.0205 0
-00000193 ` a1a21cc0 8 0.01371 0 8
+soll ermöglichen, dass Smartphones die Punkte besser erkennen. [ 8 ] Wie
+sich im Verlauf dieser Studienarbeit herausstellt, würde die ZOZOSUIT 2
+einige Probleme der PunkteErkennung und Verarbeitung lösen (vgl. 4.2.3
+). 5
 
-00000193 ` a1a21cd8 7 0.085 0 00000193 ` a1a21cf0 6 0.0286 0 00000193 `
-a1a21d08 5 0.02998 0 00000193 ` a1a21d20 4 - 0.05377 0 00000193 `
-a1a21d38 3 0.03051 0 00000193 ` a1a21d50 2 0.06661 0 00000193 ` a1a21d68
-1 - 0.09365 0 00000193 ` a1a21d80 9 .5 - 0.09092 0 00000193 ` a1a21d98 8
-.5 0.03863 0 00000193 ` a1a21db0 7 .5 0.04022 0 00000193 ` a1a21dc8 6 .5
-- 0.06106 0 00000193 ` a1a21de0 5 .5 0.05629 0 00000193 ` a1a21df8 4 .5
-- 0.00172 0 00000193 ` a1a21e10 3 .5 0.08086 0 00000193 ` a1a21e28 2 .5
-- 0.04595 0 00000193 ` a1a21e40 1 .5 - 0.0227 0 00000193 ` a1a21e58 -
-0.5 0.01736 0 Die übergebenen Punkte (aPoints) sind nicht auffällig.
-0:000> dx - r1 (*(( MnGeom364!VecR8 *) 0x561233b250 )) (*((
-MnGeom364!VecR8 *) 0x561233b250 )) [ Type: VecR8 ] [ +0x000 ] x : -
-0.002335 [ Type: double ] [ +0x008 ] y : - 0.999997 [ Type: double ] [
-+0x010 ] z : - 0.000000 [ Type: double ] Der Wert von pMatDir ist nicht
-auffällig. 0:000> dx - r1 (( MnGeom364!VecR8 *) 0x561233b470 ) ((
-MnGeom364!VecR8 *) 0x561233b470 ) : 0x561233b470 [ Type: VecR8 *] [
-+0x000 ] x : 0.000000 [ Type: double ] [ +0x008 ] y : 1 . # QNAN0 [
-Type: double ] [ +0x010 ] z : 4 .750082 [ Type: double ] 0:000> dx - r1
-(*(( MnGeom364!VecR8 *) 0x561233b040 )) (*(( MnGeom364!VecR8 *)
-0x561233b040 )) [ Type: VecR8 ] [ +0x000 ] x : 0.000000 [ Type: double ]
-[ +0x008 ] y : 1 . # QNAN0 [ Type: double ] [ +0x010 ] z : 4 .750082 [
-Type: double ] Der Werte von pLoc und dessen lokale Kopie Loc enthalten
-allerdings den Sonderwert NaN (not a number). 9
+Kapitel 3 Stand der Technik 3.1 Frontend In dieser Studienarbeit sollen
+Bilder von einer Person im ZOZOSUIT gemacht werden und diese
+anschließend ausgewertet und als 3DModell dargestellt werden. Da sowohl
+Bilder gemacht, als auch Grafiken angezeigt werden, bietet sich das
+Smartphone als Frontend an. In Deutschland besitzen 81% der Bevökerung
+ab 14 Jahren ein Smartphone, in jungen Altersgruppen steigt der
+Prozentsatz auf über 95% [ 9 ]. Smartphones können innerhalb weniger
+Sekunden aus der Tasche geholt und gestartet werden, dies ermöglicht
+einen schnellen Gesprächseinstieg mit Strike Up. Für Smartphones
+bestehen zwei dominante Betriebssysteme: Android und i OS . Mit einem
+Marktanteil von 69,8% ist Android in Deutschland Marktführer für
+Smartphonebetriebssysteme, gefolgt von i OS mit 29,8%. Andere
+Betriebssysteme, wie Windows und Blackberry, besitzen einen Marktanteil
+von 0,4%. [ 10 ]. Für Android entwickelte Apps basieren auf Java oder
+Kotlin, während i OS Apps in Swift oder ObjectiveC entwickelt werden.
+Des weiteren gibt es Tools und Software Development Kits(SDK) , mit
+welchen Apps entwickelt werden können, welche mit wenigen
+Einschränkungen auf beiden Betriebssystemen lauähig sind: • React
+Native: React Native ist ein JavaScript Framework, welches die UI in 6
 
-0:000> dx - r1 (( MnGeom364!VecR8 *) 0x561233b490 ) (( MnGeom364!VecR8
-*) 0x561233b490 ) : 0x561233b490 [ Type: VecR8 *] [ +0x000 ] x :
-0.999997 [ Type: double ] [ +0x008 ] y : - 0.002335 [ Type: double ] [
-+0x010 ] z : 0.000000 [ Type: double ] Der Wert für pDir ist nicht
-auffällig. 1.1.5 Unit Test Zunächst wurde der Unit Test mit den
-ermittelten Parametern angelegt. Danach wurden die Werte verkürzt und
-vereinfacht. Mit Hilfe von SEH (structured exception handling) konnte
-die Access Violation im Unit Test nachgewiesen werden. Es ist allerdings
-zu berücksichtigen, dass im Fall von Undefined Behavior alle Unit Tests
-nicht aussagekräftig sind. TEST_METHOD (
-QNAN_causes_undefined_behavior_due_to_nullpointer_dereferencing ) {
-const UInt4 ulNoofPnts = 3; VecR8 aPoints [3] = { {1 ,1 ,1 }, {1 ,1 ,1
-}, {1 ,1 ,1 }, }; VecR8 matDir = { 1, 1, 1 }; double qnan = std ::
-numeric_limits < double >:: quiet_NaN (); VecR8 Loc = { 1, qnan , 1 };
-VecR8 Dir = { 1, 1, 1 }; bool exception = false ; __try { tg_ajc_lin_ext
-( ulNoofPnts , aPoints , & matDir , & Loc , & Dir , True , True ); }
-__except ( GetExceptionCode () == EXCEPTION_ACCESS_VIOLATION ?
-EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH ) { exception =
-true ; } Assert :: IsTrue ( exception ); } 10
+native (Android oder iOS spezifische) Elemente umwandelt. Die Logik
+bleibt dabei unverändert. Das Framework wird von Facebook, Instagram und
+Uber benutzt. • Xamarin: Xamarin ermöglicht es Entwicklern eine
+gemeinsame Logik für Android und iOS zu schreiben. Die jeweilige UI wird
+allerdings in einer nativen Programmiersprache entwickelt. • Flutter:
+Flutter ist ein SDK , welches von Goolge erstellt, und im Jahr 2018
+erstmals in der Version 1.0 veröentlicht wurde. Das SDK verwendet die,
+ebenso von Google entwickelte, Programmiersprache Dart. Flutter
+ermöglicht es UIKomponenten zu entwickeln, welche auf beiden
+Betriebssystemen konsistent sind. Damit Apps im App Store von Apple
+veröentlicht werden dürfen, benötigt der/die Entwickler/in eine
+Mitgliedschaft im Apple Developer Program. Diese kostet pro Jahr 99
+USDollar [ 11 ]. Des Weiteren kann eine für i OS entwickelte Anwendung
+nur in einer AppleUmgebung (Macbook, …) kompiliert werden. Aus diesen
+Gründen, und wegen dem Verbreitungsanteil von 29,8% in Deutschland, ist
+das Entwickeln dieser App für eine reine i OS Umgebung nicht sinnvoll.
+Um Apps im Google Play Store zu veröentlichen, wird eine einmalige
+Registrierungsgebühr von 25 USDollar benötigt [ 12 ]. Eine jährliche
+Gebühr ist nicht vorhanden. React Native ermöglicht zwar das Entwickeln
+einer Anwendung für iOS und Android, jedoch werden nicht alle
+plattformspezifischen Application Programming Interfaces (APIs)
+unterstützt. Nicht unterstützte APIs müssen in der nativen
+Programmiersprache erstellt werden. Es muss somit trotzdem für iOS und
+Android separat entwickelt werden. [ 13 ] Die nicht vollständige
+Unterstützung nativer APIs ist eine Schwachpunkt aller Frameworks,
+welche das gleichzeitige Entwickeln für iOS und Android ermöglichen.
+Xamarin bietet durch die Unterstützung von .Net und Microsoft Visual
+Studio die beste Entwicklungsumgebung. Jedoch mindert die geringe
+Popularität die Verfügbaren Hilfestellungen durch andere
+Entwickler/innen [ 14 ]. Laut einer Umfrage von Stack Overflow ist
+Flutter das beliebteste der drei vorgestellten Frameworks [ 15 ]. Es ist
+jedoch auch das jüngste (Version 1.0 im Jahr 2018) und kann 7
 
-tg_ajc_lin_ext() ruft tg_ajc_lin_int() auf. pLoc wird an die Funktion
-pln_para_pnt() übergeben, die das Skalarprodukt ausrechnet
-(vec_sca_prod()). Hierbei wird NaN weiterpropagiert, so dass auch Dist
-NaN wird. Die Funktion min_max_dist_pln() bekommt Dist übergeben und
-propagiert ihn an D. Dadurch ergeben alle Vergleiche im Code 775 if ( D
-< DMin ) { LocalR . MinVal = D ; DMin = D ; LocalR . MinPnt = & aPoints
-[ i ];} 776 if ( D > DMax ) { LocalR . MaxVal = D ; DMax = D ; LocalR .
-MaxPnt = & aPoints [ i ];} ein negatives Ergebnis und keine der Pointer
-MinPnt und MaxPnt werden zugewiesen. Sie bleiben auf ihrem DefaultWert
-NULL. 1.1.6 Mögliche Herkunft von NaN Der Speicherinhalt an Stelle
-0x561233b470 enthält den NaN Wert für die Eigenschaft y. 0:000> dx - r1
-(( MnGeom364!VecR8 *) 0x561233b470 ) (( MnGeom364!VecR8 *) 0x561233b470
-) : 0x561233b470 [ Type: VecR8 *] [ +0x000 ] x : 0.000000 [ Type: double
-] [ +0x008 ] y : 1 . # QNAN0 [ Type: double ] [ +0x010 ] z : 4 .750082 [
-Type: double ] Im Fall einer nichtinitalisierten Variable könnte die
-Gleitkommazahl auch eine 64 Bit Ganzzahl gewesen sein. 0:000> dq / c 3
-0x561233b470 L3 00000056 `1233 b470 00000000 ` 00000000 ffffffff `
-ffffffc8 4 0130015 `997 ff316 0:000> ? ffffffff ` ffffffc8 11
+somit auf den geringsten Anteil an verfügbaren Hilfestellungen
+zurückgreifen. Auch die Unterstützung durch Bibliotheken von Dritten ist
+noch nicht so ausgererift, wie bei den anderen Frameworks. Allerdings
+steht eine gute OnlineDokumentation zur Verfügung, welche unter [ 16 ]
+erreichbar ist. [ 14 ] Ein weiterer negativer Aspekt der
+CrossPlatformEntwicklung sind Systemupdates von iOS oder Android. Ein
+Systemupdate kann neue Funktionen hinzufügen und alte Verändern oder
+Entfernen. Während bei nativen Plattformen darauf geachtet wird, dass
+alle Änderungen rückwärtskompatibel sind, müssen sich
+CrossPlatformFrameworks erst an die Änderungen anpassen. Dadurch kann es
+während Übergangsphasen zu fehlerhaftem Verhalten der App kommen. In
+Anbetracht dieser Punkte ist das Entwickeln des Frontends als reine
+AndroidApp oder als plattformübergreifende App unter Verwendung eines
+Frameworks denkbar. Die Wahl fällt hierbei auf eine CrossPlatformApp,
+welche mithilfe von Flutter, und der damit verbundenen
+Programmiersprache Dart, erstellt wird. Dies begründet sich darin, dass
+bei einer reinen Android- Anwendung knapp ein Drittel der
+Smartphonebesitzer keinen Zugriff auf die App haben würden. Die Wahl von
+Flutter ergibt sich aus der guten OnlineDokumentation und der
+Popularität, durch welche möglicherweise auftretende Probleme besser
+gelöst werden können. Als Entwicklungsumgebung wird Android Studio
+gewählt, da dieses ein FlutterPlugin besitzt und einen Emulator
+bereitstellt, mit welchem verschieden Smartphones auf verschiedenen API
+Stufen simuliert werden können. 8
 
-Evaluate expression: 56 = ffffffff ` ffffffc8 Falls das zutrifft, wäre
-ihr Wert 56 gewesen. Der Wert NaN wurde bereits an die Funktion
-tg_ajc_lin_int() übergeben. Der gemeldete Bug betrifft also ggf. nicht
-nur die Dereferenzierung eines Nullpointers, sondern auch frühere
-Methoden auf dem Callstack. Betroffen sind: 0:000> k L5 # Child - SP
-RetAddr Call Site 00 00000056 `1233 afe0 00007ff9 `95 c1d8b8
-MnGeom364!tg_ajc_lin_int+0x14e 01 00000056 `1233 b350 00007ff9 `95
-c1fefb MnGeom364!tg_ajc_lin_rl+0xd8 02 00000056 `1233 b560 00007ff7 `
-fae310df MnGeom364!tg_inn_ajc_lin+0x2b 03 00000056 `1233 b6b0 00007ff7 `
-fae4a291 GEOPAK64!pel_line+0x77f 04 00000056 `1233 bf00 00007ff7 `
-fae49687 GEOPAK64!pelm_comp_elem_intern+0xc01 977 INTERN void
-tg_ajc_lin_rl ( UInt4 ulNoofPnts , 978 VecR8 LP aPoints , 979 const
-VecR8 LP pMatDir , 980 VecR8 LP pLoc , 981 VecR8 LP pDir , 982 VecR8 LP
-pMaxPnt , 983 VecR8 LP pMinPnt , 984 Bool bFitLin ) 985 /*
-************************************************************************
-986
-************************************************************************
-*/ 987 { VecR8 LocR = * pLoc , LocL = * pLoc , vTemp , 988 DirR = * pDir
-, DirL = * pDir , 989 MatDir = * pMatDir , Extremum , MaxPnt , MinPnt ,
-Loc ; 990 Real8 MxD , Dist , Tmp = 0.0; 991 MinMaxDist_T Local , LocalR
-, LocalL ; 992 993 LocalR = tg_ajc_lin_int ( ulNoofPnts , aPoints ,
-pMatDir , & LocR , & DirR , True , bFitLin ); 994 LocalL =
-tg_ajc_lin_int ( ulNoofPnts , aPoints , pMatDir , & LocL , & DirL ,
-False , bFitLin ); Hier werden &LocL sowie &LocR übergeben. In beiden
-Fällen handelt es sich um Kopien von pLoc. 12
+Kapitel 4 Punkteverarbeitung 3DObjekte werden oft durch Scheitelpunkte
+und Dreiecke dargestellt, welche deren dreidimensionale Form
+widerspiegelt. Dabei gilt, je detaillierter ein Objekt ist, desto mehr
+Scheitelpunkte werden benötigt. Bei einem Objekt wie dem Menschen mit
+weitgehend vordefinierter Form kann die Darstellung jedoch auf einige
+wenige Größen wie Höhe, Dicke, Brustumfang, Bauchgröße und Pose
+reduziert werden. Diese Darstellung ist oft kleiner und
+aussagekräftiger. [ 17 ] Die Idee ist die Entwicklung einer
+Funktionalität, welche die Rückgabewerte der Messfunktion als
+Eingangsparameter für die Erstellung eines Modells mit STAR nutzbar
+macht. 4.1 STAR Eine dieser Darstellungen ist der Sparse Trained
+Articulated Human Body Regressor (STAR). STAR ist ein statistisches
+Modell, das den menschlichen Körper mit zwei Parametern, dem
+ShapeParameter  für die Form und dem PoseParameter  für die Pose,
+beschreibt. 9
 
-1012 ErrNoT EXPORT tg_inn_ajc_lin ( UInt4 ulNoofPnts , 1013 VecR8 LP
-aPoints , 1014 const VecR8 LP pMatDir , 1015 VecR8 LP pLoc , 1016 VecR8
-LP pDir , 1017 Real8 LP pdftLambda1 , 1018 Real8 LP pdftLambda2 , 1019
-Real4 LP pftMaxDif ) 1020 /*
-************************************************************************
-1021 << FIT >> 1022
-************************************************************************
-*/ 1023 { VecR8 MatDir , MaxPnt , MinPnt , Loc ; 1024 Real8 Dist , Tmp ;
-1025 1026 if ( 3 > ulNoofPnts ) return ERR_TG_INSUF_PTS ; 1027
-tg_ajc_lin_rl ( ulNoofPnts , aPoints , pMatDir , & Loc , pDir , & MaxPnt
-, & MinPnt , True ); 1028 // projection the Gau \ ss centroid on the
-Tschebycheff line 1029 MatDir = vec_norm ( vec_vec_prod (* pDir ,
-vec_vec_prod (* pMatDir , * pDir )), & Tmp ); 1030 * pLoc =
-bg_proj_pnt_pln (* pLoc , MatDir , Loc ); Hier wird &Loc an die Funktion
-übergeben, Loc bei der Deklaration aber nicht initialisiert. 1.2 Build
-Instructions 1.2.1 WinDbg Crash Analyse Benötigte Tools:  Windows
-Betriebssystem  WinDbg Preview [ 1 ]  Crash Dumb des Bugs 
-SymbolDateien des Codes > GEOPAK64.pdb, MnGeom364.pdbS  Zugriff auf
-Azure DevOps Server von MitutoyoCTL Germany GmbH Um den Crash Dump nun
-zu analysieren, wird dieser mit WinDbg Preview über die 13
+4.1.1 Shape Einer der beiden Parameter für die Generierung des Modells
+eines menschlichen Kröpers mit STAR ist der sogenannte ShapeParameter.
+Dieser umfasst 10 bis 300 Skalare  =  0 ; : : : ; jj  , welche die
+Form des menschlichen Körpers widerspiegeln. Jedes Skalar erwirkt bei
+der Modellgenerierung eine Veränderung eines bestimmten Merkmals. Das
+Skalar 0 ist dabei beispielsweise ausschlaggebend für die Größe des
+Modells, 1 wirkt auf das Verhältnis von Körpergröße und Gewicht,
+ähnlich wie der Body Mass Index. Der Wert für 2 bestimmt die Höhe des
+Torsos und Schulterbreite, jener für 3 die Brustbreite sowie
+Nackenhöhe. (a) negativ (b) positiv (c) default (=0) Abbildung 4.1:
+Gerenderte Modelle mit verschiedenen ShapeParametern 10
 
-Funktion Open dump file geöffnet. Die darauf folgenden Schritte sind
-bereits in 1.1 beschrieben. 1.2.2 Kompilieren von
-Mitutoyo.MCOSMOS.BasicLibs Benötigte Tools:  Windows Betriebssystem 
-Visual Studio 2017 oder Visual Studio 2019 ohne Updates  Zugriff auf
-den Azure DevOps Serever von MitutoyoCTL Germansy GmbH  Git Extensions
-oder ein ähnliches Tool zum Klonen von Git Repositorys Damit der Source
-Code kompiliert werden kann, muss dieser zuest mit Git Extensions (oder
-einem ähnlichen Tool) von http : / / tfs-ctlg . mitutoyo-ctl . de /
-Public / Projects / _git / Mitutoyo . MCOSMOS . BasicsLibs geklont
-werden. Anschließend öffnet man den Ordner Mitutoyo.MCOSMOS.BasicsLibs
-mit Visual Studio. Abbildung 1.1: Hier den Eintrag ändern Da keine
-Leerzeichen im Pfadname verarbeiten kann, muss in den Eigenschaften der
-Datei Mitutoyo.MCOSMOS.BasicsLibs\Source\CryptoPP\x64dll.asm unter
-Custom Build 14
+Ein negativer Wert für ein Skalar reduziert dabei das entsprechende
+Merkmal, ein positiver Wert verstärkt dieses (vgl. Abb. 4.1 ). Je höher
+dabei die Anzahl an Skalaren, desto genauer lässt sich das Modell an
+einen bestimmten Körperbau anpassen, im Gegenzug erhöht sich aber der
+Rechenaufwand. 4.1.2 Pose Der zweite Eingabeparameter für STAR ist der
+PoseParameter, welcher die zu generierende Pose mit 24 Vektoren  = 
+~0 ; : : : ; ~23  , die je 3 Skalare ~n =  xn ; yn ; zn  umfassen,
+beschreibt. Die Vektoren werden als Rotation in AxisAngleDarstellung von
+Gelenken des menschlichen Körpers relativ zum Vorgängergelenk
+interpretiert, welche zusammengesetzt einen sogenannten Kinematischen
+Baum mit den wichtigsten Gelenkpunkten ergeben (vgl. Abb. 4.2 , (b)).
+Die AxisAngleDarstellung beschreibt die Drehung eines dreidimensionalen
+Objekts um den Winkel  um eine Rotationsachse mit dem Einheitsvektor ~e
+. Diese beiden Variablen können mit   ~e als Vektor mit drei
+Parametern und dem Betrag  zusammengefasst werden. (vgl. Abb. 4.2 ,
+(a)). (a) (b) Abbildung 4.2: Gelenke des STARModells (a) und
+AxisAngleDarstellung einer Rotation [ 18 ] (b) 11
 
-Tool > General > Command Line folgender Eintrag eingegeben werden:
-ml64.exe /c /nologo /Fo"$(IntDir)x64dll.obj Zi "%(FullPath)" (vgl. 1.1
-). Des Weiteren muss in der Datei IniFileHelper.h folgender Code ergänzt
-werden: 14 #define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
-15 #include <experimental/filesystem> Zuletzt muss die Operation
-Restore NuGet Packages, über einen Rechtsklick auf die Solution,
-ausgewählt und ausgeführt werden. Der Code kann nun kompiliert werden.
-15
+Dabei gilt, je kleiner der Wert eines Skalars gegenüber den anderen
+beiden Skalaren, desto geringer ist die Drehung entlang der
+entsprechenden XAchse, YAchse oder ZAchse. Ein Drehung um  2 um die
+XAchse und  2 um die YAchse entspräche  0:89   2 ; 0:45   2 ; 0 
+in AxisAngleDarstellung. Durch verschiedene Gewichtungen der 24 Vektoren
+kann so jede erdenkliche Pose dargestellt werden (vgl. Abb. 4.3 , (b)).
+Sind die Elemente eines Vektors ~n =  0 ; 0 ; 0  , befindet sich das
+Gelenk in Ruheposition. Abbildung 4.3 (a) zeigt das Modell, bei dem sich
+alle Gelenke in Ruhepose befinden. (a) Ruhepose (b) Zufällige Pose
+Abbildung 4.3: Gerenderte Modelle mit verschiedenen PoseParametern 4.1.3
+Funktionsweise Die Pipeline der Synthese des menschlichen Körpers mit
+Star erfolgt in drei Schritten. In einem ersten Schritt wird ein
+TemplateModell T in Ruhepose und ohne FormKorrekturen erstellt und
+Scheitelpunktversätze zum Modell T mit der Funktion Bs(; S) berechnet.
+Der Parameter S beschreibt dabei vordefinierte grundlegende Komponenten,
+welche den Bereich der menschlichen Formvariabilität erfassen. Addiert
+ergeben Modell T und Scheitelpunktversätze ~Vshaped , ein Modell in
+Ruhepose, das die mit den ShapeKoeffizienten definierten physikalischen
+Attribute und die Identität widerspiegelt. 12
 
-Literatur [1] Microsoft.com, WinDbg Preview. url: https : / / www .
-microsoft . com / en - us / p / windbg - preview / 9pgjgd53tn86 ?
-activetab = pivot : overviewtab (besucht am 20.01.2021). 16
+Der menschliche Körper verformt sich in unterschiedlichen Posen anders,
+was für ein realistisches Ergebnis in Betracht gezogen werden muss.
+Diese Verformung ist zudem abhängig von der Form des Körpers. Der zweite
+Schritt dient dementsprechend der Berechnung der durch die Pose 
+verursachten Verformungen in Korelation mit den ShapeKoeffizienten 
+durch die Funktion Bp(~q; 1) . Der Parameter ~q stellt dabei den
+kinematischen Baum als Quaternion mit je vier Parametern pro
+Skelettpunkt dar. 1 , also der zweite Koezient des ShapeParameters, ist
+repräsentativ für die allgemeine Form des Körpers und stimmt in vielen
+Punkten mit dem Body Mass Index (BMI) überein. Da 1 den mit Abstand
+größten Einfluss auf die Verformungen durch spezielle Posen hat, können
+die restlichen ShapeKoeffizienten vernachlässigt werden. Das Endresultat
+~Vposed , gegeben durch stellt nun ein Modell in Ruhepose dar, das
+sowohl Verformungen durch den ShapeParameter als auch durch den
+PoseParameter umfasst. Da das Modell ~Vposed posenspezifische
+Verformungen umfasst, aber trotzdem in Ruhepose dargestellt wird, kann
+ein leicht unförmiger Eindruck entstehen. Im dritten und letzten
+Schritt, dem sogenannten Skinning, wird das Mesh mit einer standard
+skinning Funktion W um die Joints von ~Vshaped transformiert sowie durch
+ein erlerntes Set aus blend weight parametern geglättet. Das Modell ist
+schlussendlich gegeben durch Die Funktion J regressiert dabei die Joints
+zwischen den Skelettpunkten aus ~Vshaped . Das so synthetisierte Modell
+des menschlichen Körpers ist realistisch und weicht bei richtiger
+Messung und Parametrierung von Shape und Pose um nur wenige Millimeter
+ab. Ziel des folgenden Kapitels ist die Entwicklung einer
+Funktionalität, welche die Rückgabewerte der Messfunktion als
+Eingangsparameter für die Erstellung eines Modells mit STAR nutzbar
+macht. 13
+
+4.2 Verarbeiung Um mittels Star ein realistisches Modell des
+menschlichen Körpers zu generieren, müssen die Rückgabewerte der
+MeasureFunktion zu ShapeParameter v und PoseParameter  konvertiert
+werden. Im folgenden wird die Idee der Konvertierung, die Umsetzung
+sowie aufgetretene Probleme dargestellt. 4.2.1 Idee In allen großen
+Messpunkten des Zozosuits befindet sich eine einzigartige
+Punkteanordnung, wodurch jedem gescannten Messpunkt eine ID und somit
+eine entsprechende Position auf dem Zozosuit zugewiesen werden kann.
+Diese ID wird von der MeasureFunktion, neben den genauen Koordinaten und
+einer geschätzten Entfernung des Punktes, erfasst. Dadurch lässt sich
+eine dreidimensionale Punktewolke erzeugen und die genauen Koordinaten
+eines Messpunktes auf dem Zozosuit mit der ID ermitteln. Die Pose kann
+so durch Zuweisung von passenden Punkten des Zozosuits zu den
+Gelenkpunkten des PoseParameters rekonstruiert werden. Hierfür ist es
+erforderlich, die Rotation In AxisAngleDarstellung zu berechnen, welche
+den Vektor zwischen zwei Gelenkpunkten des kinematischen Baums der
+Ruhepose zu dem Vektor zwischen den zwei entsprechenden Punkten auf dem
+Zozosuit rotiert. Die Ermittlung des ShapeParameters erweist sich als
+komplexer. Die bis zu 300 verschiedenen Skalare, welche auch in
+gegenseitiger Wechselwirkung stehen, zu erschließen, ist mit den Daten,
+die die Messfunktion des Zozosuit liefert, unmöglich. Allerdings könnte
+man nur einige wenige der Skalare betrachten, welche einen großen
+Einfluss auf die allgemeine Form haben, wie die Skalare 0 und 1 ,
+welche die Größe sowie den Body Mass Index des Modells beschreiben.
+Diese können durch Messung von Entfernungen verschiedener bestimmter
+Punkte grob bestimmt werden. Dies soll aber im Rahmen der Arbeit dieser
+Arbeit nicht näher betrachtet werden. 14
+
+4.2.2 Umsetzung Für die Ermittlung der Pose aus den Daten der
+ZozosuitMessfunktion erfolgt in einem ersten Schritt die Zuweisung der
+IDs von Messpukten zu den Gelenkpunkten des PoseParameters. Dies wird
+einmalig durch einen Vergleich von Gelenkpunkten des Kinematischen Baums
+und Messpunkten auf dem Zozosuit ermittelt. (a) Erfasste Punkte (b)
+Numerierte Joints des STARModells [ 19 ] Abbildung 4.4: Vergleich von
+Joints des StarModells und Punkten des Zozosuits mit IDs in Gelb Die
+Koordinaten der Messpunkte, deren ID mit einem Gelenkpunkt verknüpft
+ist, werden aus dem Rückgabewert raw_data als dreidimensionale
+Punktewolke ausgelesen. Da der PoseParameter Rotationen von Gelenk zu
+übergeordnetem Gelenk gemäß des kinematischen Baums benötigt, ist eine
+Konvertierung der Punktewolke zu Rotation in AxisAngleDarstellung
+erforderlich. Die Rotation eines Gelenks wird dabei relativ zur 15
+
+Rotation des Gelenks in Ruhepose berechnet. In anderen Worten muss die
+Rotation des Vektors v_src von übergeordnetem Gelenkpunkt zu Gelenkpunkt
+der Ruhepose zu Vektor v_dst von übergeordnetem Gelenkpunkt zu
+Gelenkpunkt der Messpose berechnet werden. Hierfür dient die Funktion
+axis_angle(v_src,v_dst), welche die Rotation von v_src zu v_dst in
+AxisAngleDarstellung zurückgibt. In der Funktion axis_angle(…) werden in
+einem ersten Schritt werden beide Vektoren genormt, da lediglich die
+Richtung der Vektoren bei der Berechnung der Rotationsmatrix eine Rolle
+spielen. Die Rotationsachse ist definiert durch das Kreuzprodukt von
+Ursprungsvektor und Zielvektor, der Winkel der Drehung durch den
+Arkustangens des Skalarprodukts der beiden Vektoren. Demnach lässt sich
+die Drehung eines Vektors ~vsrc zu einem Vektor ~vdst in
+AxisAngleDarstellung mit berechnen. Nachdem dies für alle Gelenke
+berechnet wird, lässt sich mit Hilfe von Star ein Modell generieren,
+welches die Pose der Person auf dem Bild widerspiegelt. Allerdings
+treten dabei einige Probleme auf, die das Ergebnis stark verzerren
+können, welche im folgenden vorgestellt werden. 4.2.3 Probleme Bei der
+Synthese der Pose aus den Messpunkten des Zozosuit treten eine Reihe von
+Problemen auf. Fehlende Messpunkte an Gelenken Eine Problem ist, dass
+nicht für jedes Gelenk ein Messpunkt auf dem Zozosuit existiert. Einige
+Gelenke müssen deshalb komplett ausgelassen werden, wie beispielsweise
+jene an Kopf, Füßen und Händen, da kein Messpunkt in der Nähe existiert.
+Diese sind für die gesamte Pose aber nicht ausschlaggebend. Deshalb wird
+für diese die Ruhepose des Gelenkes  =  0 ; 0 ; 0  verwendet. Bei
+anderen Gelenken, vor allem in der 16
+
+Schulterregion liegen die Messpunkte lediglich in der Nähe des Gelenks
+(vgl. Abb. 4.5 ). (a) Erfasste Punkte in der Schulterregion (b) Gelenke
+in der Schulterregion [ 19 ] Abbildung 4.5: Vergleich von Joints des
+StarModells und Punkten des Zozosuits mit IDs in gelb Dadurch wird die
+Pose verzerrt, Beispiele hierfür sind leicht falsch abstehende Arme oder
+gespreizte Beine. Zwar können einige Gelenke durch Zusammenspiel von
+mehreren Messpunkten berechnet werden, allerdings wird der Eekt durch
+das nachfolgend beschriebene Problem verstärkt. 17
+
+Lückenhafte Punkterkennung Bei der Erkennung der Messpunkte mit der
+ZozosuitMessfunktion werden häufig Punkte gar nicht oder ohne ID
+erkannt. Die dadurch entstehende lückenhafte dreidimensionale
+Punktewolke der Messpose hat zur Folge, dass nicht alle PoseParameter
+berechenbar sind. Jeder fehlende Messpunkt, mit Ausnahme der Start- und
+Endpunkte, verursacht zwei fehlende PoseParameter, die zur Ruhepose des
+Gelenks gesetzt werden müssen. Dadurch kommt es teils zu einer Pose des
+Modells, die einigen essentiellen Aspekten gar nicht mit der Pose des
+Menschen auf dem Bild übereinstimmt. So kann eine fehlerhafte Erkennung
+des Messpunktes für ein Schultergelenk dazu führen, dass der Arm des
+Modells waagerecht (Ruhepose) steht, und nicht wie auf dem Bild
+dargestellt. Wird versucht, Gelenke mit mehreren Messpunkten zu
+beschreiben, steigt dabei die Wahrscheinlichkeit für fehlende
+berechenbare PoseParameter, sodass dies keine Lösung zum ersten Problem
+darstellt. Verzerrung durch Drehung des Zozosuits Ein weiteres Problem
+ist, dass sich der Zozosuit nach dem Anziehen oft leicht verdreht ist.
+Dadurch liegen die vordefinierten Messpunkte nicht genau auf den
+entsprechenden Gelenken, oder können teils gar nicht erkannt werden, da
+diese nun im toten Winkel der Kamera liegen. Dies verursacht häufig
+gespreizte beziehungsweise verdrehte Beine oder einen verdrehten
+Oberkörper sowie eine lückenhafte Erkennung der Punkte in der Armregion,
+was eine Darstellung der Arme in Ruhepose zur Folge hat. Zwar kann diese
+Fehlerquelle durch korrekten Sitz des Zozosuits teilweise verhindert
+werden, allerdings verbleibt meistens eine Restdrehung. Fehlerhafte
+Erkennung der ID Die wohl gravierendste Fehlerquelle besteht in der
+falschen Erkennung der ID eines Messpunktes. Teilweise weist die
+ZozosuitMessfunktion einem Messpunkt eine falsche ID zu. Ist der
+Messpunkt jener falsch erkannten ID einem Gelenk zugewiesen, kann dies
+gravierende Folgen für das generierte Modell haben. Je nach Lage des
+Messpunktes mit 18
+
+der falschen ID kann das Gelenkt stark verdreht werden, was eine
+groteske Darstellung des Gelenks im Modell zur Folge hat. Das Modell
+zeigt dadurch teilweise einen in Teilen deformierten menschlichen
+Körper, beispielsweise mit einem grotesk verdrehten und abstehendem
+Bein, was bei den vorgenannten Problemen nicht auftreten kann. Bei jenen
+wird zwar die Pose oft nicht richtig widergespiegelt, allerdings
+verkörpert die gezeigt Pose im Modell eine reale, nachstellbare Pose. 19
+
+Kapitel 5 App Da die App Kamerafunktionen verwendet, wird auf dem
+Smartphone ein API Level von 21 vorausgesetz. Dies entspricht Android
+5.0, welches 2014 erschienen ist. 5.1 Aufbau Abbildung 5.1:
+Programmablauf der App In 5.1 ist der Programmablauf der App
+dargestellt. Die einzelnen Screens und deren Funktionen werden in den
+folgenden Abschnitten erläutert. Da das Design kein Hauptmerkmal der
+Anwendung ist, wurde eine simple Benutzeroberfläche erstellt. Diese
+beruht auf einem DarkDesign und setzt Akzente in Blau. 20
+
+5.2 MainScreen Abbildung 5.2: Der Mainscreen der App Der Startbildschirm
+der Anwendung ( 5.2 ) verfügt über zwei Buttons: „Take picture“ und
+„View previous model“. Mit „View previous model“ wird der
+ViewModelScreen ( 5.7 ) aufgerufen und das zuletzt generierte 3DModell
+angezeigt. Befindet sich auf dem Gerät kein zuvor generiertes Modell, so
+wird ein Popup mit einer ErrorMessage angezeigt ( 5.3 ). Diese weißt
+darauf hin, dass kein Modell vorhanden ist und dieses somit zuerst durch
+Aufnehmen und Auswerten eines Fotos generiert werden muss. Sobald der
+Startbildschirm generiert wird, werden die auf dem Smartphone
+verfügbaren Kameras gescannt und in einer Liste gespeichert. Aus dieser
+Liste wird die Rückkamera ausgelsesen und gespeichert. Die Kamera wird
+später in 5.4 benötigt. Das Auslesen und Auswerten der Gerätekameras
+kann etwas Zeit in Anspruch nehmen, weshalb dies bereits im Mainscreen
+passiert und nicht erst beim Aufrufen von TakePictureScreen. Wird der
+Button „Take picture“ gedrückt, so wird der SelectBodyTypeScreen
+generiert und diesem die zuvor gespeicherte Kamera übergeben. 21
+
+Abbildung 5.3: ErrorMessage 22
+
+5.3 SelectBodyTypeScreen Abbildung 5.4: Auswahl des Körpertyps Auf dem
+SelectBodyTypeScreen sind drei Buttons vorhanden: „Male“, „Use testing
+image“ und „Female“. Zusätzlich ist eine Statusleiste vorhanden, welche
+zurück zum vorherigen Screen leitet. Der Button „Use testing image“
+leitet den Nutzer direkt zum DisplayPictureScreen ( 5.5 ). Dort wird ein
+Beispielbild eines Entwicklers in der ZOZOSUIT angezeigt, welches
+anschließend ausgewertet werden kann. Diese Funktion ist sinnvoll, wenn
+man die Anwendung testen will und keinen eigenen ZOZOSUIT besitzt oder
+wenn man den Prozess des An- und Ausziehens des ZOZOSUIT umgehen will.
+Die Buttons „Male“ und „Female“ leiten den Nutzer zum TakePictureScreen
+weiter. Hierbei wird die Variable gender übergeben, welche bei der
+Generierung des 3DModells benötigt wird. Das drücken eines Buttons setzt
+dabei die Variable auf das dem Button entsprechende Geschlecht. 23
+
+5.4 TakePictureScreen Abbildung 5.5: Aufnehmen eines Bildes Der
+TakePictureScreen verfügt über einen Button mit einem Kamerasymbol und
+eine Statusleiste, welche den Nutzer zum vorherigen Screen leitet. In
+der Mitte des Bildschirms wird der aktuelle Kamerafeed der Rückkamera
+angezeigt, welche bereits in 5.2 bereitgestellt wurde. Wird der
+Kamerabutton gedrückt, so wird ein Bild aufgenommen und temporär
+gespeichert. Der Pfad zum aktuellen Bild und das vom
+SelectBodyTypeScreen erhaltene Geschlecht werden an den
+DisplayPictureScreen weitergeleitet, welcher nun generiert wird. 24
+
+5.5 DisplayPictureScreen Abbildung 5.6: Anzeigen des aufgenommenen
+Bildes Der DisplayPictureScreen zeigt das zuvor aufgenommene Bild an und
+besitzt den Button „Evaluate“ und eine Statusleiste, welche den Nutzer
+zum vorherigen Screen leitet. Wurde im SelectBodyTypeScreen der Button
+„Use test image“ gedrückt, so wird eine Variante dieses Screens
+angezeigt. Der einzige Unterschied liegt dabei darin, dass nicht das
+zuvor aufgenommene Bild, sondern ein aus den, in der App enthaltenen,
+Assets geladenes Bild, angezeigt wird. Wird der Button gedrückt, so
+zeigt dieser eine Ladeanimation an, bis alle durch den Button
+aufgerufenen Funktionen abgeschlossen sind. Zuerst wird das aktuelle
+Bild zu einem Base64String ([ 20 ]) konvertiert. Der somit generierte
+String wird nun mit dem erhaltenen Geschlecht JSONkodiert per
+POSTRequest an den Server gesendet. Der Server wertet die Daten aus und
+generiert daraus ein 3DModell als .glbDatei. Diese Datei wird zu Base64
+kodiert und JSONkodiert an die App zurückgesendet. Der Base64String wird
+nun dekodiert und in dem appspezifischen Speicher gespeichert. 25
+
+Hierbei muss darauf geachtet werden, dass die Speicherorte auf Android
+und iOS Geräten verschieden sind. Deshalb wird das Betriebssystem des
+Smartphones bestimmt und daraus lässt sich der Pfad zum Speicherort für
+appspezifische Dateien generieren. Die dekodierte Datei wird nun an dem
+erhaltenen Pfad gespeichert. Der Pfad zum gespeicherten 3DModell (die
+.glb Datei) wird gespeichert und an den ViewModelScreen weitergegeben,
+welcher nun generiert wird. 26
+
+5.6 ViewModelScreen Abbildung 5.7: Anzeigen des 3DModells Der
+ViewModelScreen erhält einen Pfad zu einer .glbDatei. Diese Datei wird
+gerendert und als drehbares 3DModell gerendert. Zusätzlich ist eine
+Statusleiste mit einem HomeButton vorhanden, welcher den Nutzer zurück
+zum MainScreen bringt. Um das 3DModell zu rendern verwendet die App das
+Plugin Model Viewer ([ 21 ]). Model Viewer erstellt eine WebView und
+startet somit einen Server innerhalb der App. Das 3DModell wird in einem
+Browser mithilfe von WebGL gerendert und in der App dargestellt. Der
+Button rechts unten lädt das Modell im von Google erstellten
+modelviewer, auf welchem dieses Plugin basiert. 27
+
+5.7 Probleme 5.7.1 iOS Damit Anwendungen für iOS Systeme kompiliert
+werden können, wird eine AppleUmgebung (Macbook, …) benötigt. Da keiner
+der Entwickler Zugang zu solch einer Umgebung hat, konnte die
+ReleaseVersion der App für iOS nicht getestet werden. 5.7.2
+Serverkommunikation In den Anfangsphase der Entwicklung wurde der Server
+nur lokal per localhost betrieben. Somit konnte die App nicht mit dem
+eigenen Smartphone, sondern nur mit dem in Android Studio enthaltenen
+Emulator betrieben werden. Dieser hat keinen Zugriff auf die
+normalerweise durch den localhost bereitgestellten Adressen. Android
+Studio umgeht dieses Problem, indem localhost über eine andere
+Schnittstelle angesprochen werden kann. Die neue Adresse, über welche
+die Kommunikation zum localhost möglich ist, muss allerdings zuerst
+herausgefunden werden. Der vom Server zurückgesendete Base64kodierte
+String bekommt aus unbekannten Gründen zusätzliche Zeichen am Anfang und
+Ende hinzu. Diese verhindern, dass der String dekodiert werden kann. Das
+daraus resultierende Modell wäre nicht mehr das korrekte, vom Server
+gesendete, Modell. Zusätzlich entspricht der String nicht mehr den
+Base64Konventionen und sorgt somit für einen Error bei der Dekodierung.
+Um dies zu umgehen wird der String am Anfang und Ende gekürzt und somit
+alle überschüssigen Symbole entfernt. Zu Beginn war der Server über eine
+httpAdresse erreichbar. Ab Android 9 werden allerdings jegliche
+Kommunikationsversuche mit einer unverschlüsselten (http) Adresse
+standardmäßig blockiert. Somit konnten keine Daten gesendet oder
+empfangen werden. In den SettingsDateien von Android lässt sich die
+Kommunikation mit unverschlüsselten Adressen aktivieren. Dies ist auch
+im Hinblick auf Model Viewer sinnvoll, da das Plugin einen httpServer
+erstellt. Das rendern der Modelle wäre somit ohne die Aktivierung der
+unverschlüsselten Kommunikation nicht möglich. 28
+
+Zusätzlich wurde dem Server ein Zertifikat hinzugefügt, mit welchem das
+Betreiben eines httpsServers möglich ist. 5.7.3 Model Viewer Model
+Viewer benutzt den Browser, um die 3DModelle zu ladden und anzuzeigen.
+Das Plugin unterstützt dabei aber nur die zwei aktuellsten Versionen der
+bekannten Browser (Chrome, Edge, Firefox, Safari, …). Der von Android
+Studio bereitgestellte Emulator hat Chrome installiert, davon aber die
+Version 83. Die aktuelle Version von Chrome ist allerdings 91. Die auf
+dem Emulator verfügbare Version ist somit nicht von Model Viewer
+unterstützt. Auf dem Emulator ist kein Play Store vorhanden. Somit kann
+die Version von Chrome auch nicht aktualisiert werden. Wird versucht ein
+3DModell anzuzeigen, so erscheint nur ein weißer Bildschirm. Dies
+resultiert darin, dass alle Tests mit 3DModellen an einem echten Gerät
+durchgeführt werden müssen. Zusätzlich wird somit auch ein nicht lokal
+laufender Server benötigt. 29
+
+Kapitel 6 Zusammenfassung und Ausblick In dieser Studienarbeit konnte
+das Ziel der Generierung eines 3DModells aus einem Bild einer Person,
+welche den ZOZOSUIT trägt, realisiert werden. Es werden allerdings nicht
+alle Punkte zuverlässig erkannt. Zudem werden zur Generierung des
+3DModells eines Menschen bestimmte Punkte am Körper benötigt. Der
+ZOZOSUIT hat nur 500 verfügbare Punkte, welche bestenfalls in der Nähe
+der benötigten Punkte liegen. Zudem kann ein nicht perfekt sitzender
+ZOZOSUIT für starke Verfälschungen sorgen. Das Ergebnis ist ein
+3DModell, welches besonders in der Haltung nicht dem ursprünglichen Bild
+entspricht. Besonders anfällig sind hierbei die Positionen der Arme und
+Beine. Der von ZOZO inc. veröentlichte ZOZOSUIT 2 könnte diese Probleme
+lösen. So sind bei diesem die zur Identifizierung benötigten Punkte
+besser erkennbar und die Anzahl der auf dem Suit verfügbaren Punkte
+wurde auf 20000 erhöht. Durch die erhöhte Punktanzahl und einer besseren
+Erkennwahrscheinlichkeit, können die für ein 3DModell relevanten Punkte
+zuverlässiger erkannt werden. Zudem soll der ZOZOSUIT 2 passgenauer
+sein, was einer Verschiebung des ANzugs entgegenwirkt. Eine
+Wiederaufnahme dieser Studienarbeit mit einem ZOZOSUIT 2 wäre somit sehr
+interessant. 30
+
+Literatur [1] Forbes: ZOZO inc. URL: https : / / www . forbes . com /
+companies / zozo/ (besucht am 13.06.2021). [2] ZOZO history. URL: https
+: / / corp . zozo . com / en / about / history/ (besucht am 13.06.2021).
+[3] Bild: ZOZOSUIT. URL: https : / / 8900km . de / wp - content /
+uploads / 2018 / 10 / zozosuit . jpg (besucht am 13.06.2021). [4]
+Aktienkurs: ZOZO inc. URL: https : / / www . boersennews . de / markt /
+aktien / detail / jp3399310006/ (besucht am 13.06.2021). [5] QUARTZ:
+ZOZO promised too much. URL: https : / / qz . com / quartzy / 1486352 /
+zozos - zozosuit - for - custom - clothes - is - looking - like - a -
+bust/ (besucht am 13.06.2021). [6] Bild: ZOZOSUIT 2. URL: https : / /
+d31ex0fa3i203z . cloudfront . net / assets / global / measurement -
+technology / zozosuit2 _ 1 . png (besucht am 13.06.2021). [7] Bild:
+ZOZOSUIT 2. URL: https : / / encrypted - tbn0 . gstatic . com / images ?
+q = tbn : ANd9GcTk8maq2eZk9LgK66Yi - 2I77YN6cjJno9 _
+cieOhnM0znfVwv7FTu0gG0vp - GcGui3zue _ s & usqp = CAU (besucht am
+13.06.2021). [8] ZOZOSUIT 2. URL: https : / / corp . zozo . com / en /
+measurement - technology/ (besucht am 13.06.2021). [9]
+Marktforschung.de, EITO: Smartphonenutzung. URL: https : / / www .
+marktforschung . de / aktuelles / marktforschung / acht - von - zehn -
+menschen - in - deutschland - nutzen - ein - smartphone/ (besucht am
+12.08.2020). [10] Kantarworldpanel.com, Smartphone OS Market Share. URL:
+https : / / www . kantarworldpanel . com / global / smartphone - os -
+market - share/ (besucht am 13.06.2021). 31
+
+[11] Developer.apple.com, Abschluss und Aktivierung. URL: https : / /
+developer . apple . com / de / support / purchase - activation/ (besucht
+am 04.09.2020). [12] Play.google.com, Google Play Console. URL: https :
+/ / play . google . com / apps / publish / signup/ (besucht am
+06.09.2020). [13] Medium.com, React Native vs iOS/Android Native: what
+is the best choice for mobile development today? URL: https : / / medium
+. com / @smartym . pro / react - native - vs - ios - android - native -
+what - is - the - best - choice - for - mobile - development - today -
+67cde42fc8bc (besucht am 05.09.2020). [14] Blog.logrocket.com, Flutter
+vs. React Native vs. Xamarin. URL: https : / / blog . logrocket . com /
+flutter - vs - react - native - vs - xamarin/ (besucht am 05.09.2020).
+[15] Insights.stackoverflow.com, Most loved dreaded and wanted. URL:
+https : / / insights . stackoverflow . com / survey / 2019 # most -
+loved - dreaded - and - wanted (besucht am 05.09.2020). [16] Flutter
+Dokumentation. URL: https : / / flutter . dev / docs (besucht am
+13.06.2021). [17] Khanh Ha. SMPL Human Model Introduction. 2018. URL:
+https : / / khanhha . github . io / posts / SMPL - model - introduction/
+(besucht am 13.06.2021). [18] Wikipedia. Axis–angle representation —
+Wikipedia, The Free Encyclopedia. 2021. URL: http : / / en . wikipedia .
+org / w / index . php ? title = Axis % 5C % E2 % 5C % 80 % 5C % 93angle
+% 5C % 20representation & oldid = 1022906751 (besucht am 13.06.2021).
+[19] Ahmed A A Osman, Timo Bolkart und Michael J. Black. „ STAR: A
+Sparse Trained Articulated Human Body Regressor“. In: European
+Conference on Computer Vision (ECCV). 2020, S. 598– 613. URL: https : /
+/ star . is . tue . mpg . de . [20] Base64. URL: https : / / de .
+wikipedia . org / wiki / Base64 (besucht am 13.06.2021). [21] Model
+Viewer. URL: https : / / pub . dev / packages / model _ viewer (besucht
+am 13.06.2021). 32
