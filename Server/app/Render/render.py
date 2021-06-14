@@ -62,6 +62,9 @@ def render(gender, data, len):
   
   # search for joints in data
   for i in range(len): 
+    # id is most likely invalid
+    if(data[i]['confidence']<0.3):
+      continue
     if(data[i]['point_id'] == 3235):
       p[0] = np.array([data[i]["position"][0], -data[i]["position"][1], data[i]['distance']])
     if(data[i]['point_id'] == 3085):
@@ -134,9 +137,6 @@ def render(gender, data, len):
   poses[0].reshape(24,3)[22] = axis_angle(p[20], p[22],  restpose[22] - restpose[20])
   poses[0].reshape(24,3)[23] = axis_angle(p[21], p[23],  restpose[23] - restpose[21])
 
-  poses[0].reshape(24,3)[14]=torch.Tensor(np.array([0,0,1]))
-
-  # poses[0][44] = 1
   trans = torch.FloatTensor(np.zeros((batch_size,3)))
   model = star.forward(poses, betas,trans)
 
@@ -161,5 +161,7 @@ def axis_angle(p1, p2, vector_orig):
   if axis_len != 0.0:
     axis = axis / axis_len
 
+  # The rotation angle.
+  angle = np.arccos(np.dot(vector_orig, vector_fin))
   # Return the data.
   return torch.FloatTensor(axis * angle)
