@@ -1,7 +1,7 @@
 \chapter{App}
 \label{ch:app}
 
-Da die App Kamerafunktionen verwendet, wird auf dem Smartphone ein \acrshort{api}-Level von 21 vorausgesetz. Dies entspricht Android 5.0, welches 2014 erschienen ist.
+Da die App Kamerafunktionen verwendet, wird auf dem Smartphone ein \acrshort{api}-Level von 21 vorausgesetzt. Dies entspricht Android 5.0, welches 2014 erschienen ist.
 
 \section{Aufbau}
 \begin{figure}[htpb]
@@ -37,7 +37,7 @@ kein zuvor generiertes Modell, so wird ein Popup mit einer Error-Message angezei
 durch Aufnehmen und Auswerten eines Fotos generiert werden muss.
 
 Sobald der Startbildschirm generiert wird, werden die auf dem Smartphone verfügbaren Kameras gescannt und in einer Liste gespeichert. Aus dieser Liste wird die Rückkamera 
-ausgelsesen und gespeichert. Die Kamera wird später in \ref{sec:takepicture} benötigt. Das Auslesen und Auswerten der Gerätekameras kann etwas Zeit in Anspruch nehmen, weshalb dies 
+ausgelesen und gespeichert. Die Kamera wird später in \ref{sec:takepicture} benötigt. Das Auslesen und Auswerten der Gerätekameras kann etwas Zeit in Anspruch nehmen, weshalb dies 
 bereits im Mainscreen passiert und nicht erst beim Aufrufen von TakePictureScreen.
 
 Wird der Button \glqq{}Take picture\grqq{} gedrückt, so wird der SelectBodyTypeScreen generiert und diesem die zuvor gespeicherte Kamera übergeben.
@@ -59,7 +59,7 @@ angezeigt, welches anschließend ausgewertet werden kann. \newline
 Diese Funktion ist sinnvoll, wenn man die Anwendung testen will und keinen eigenen ZOZOSUIT besitzt oder wenn man den Prozess des An- und Ausziehens des ZOZOSUIT umgehen will.
 
 Die Buttons \glqq{}Male\grqq{} und \glqq{}Female\grqq{} leiten den Nutzer zum TakePictureScreen weiter. Hierbei wird die Variable \textit{gender} übergeben, welche bei der Generierung 
-des 3D-Modells benötigt wird. Das drücken eines Buttons setzt dabei die Variable auf das dem Button entsprechende Geschlecht.
+des 3D-Modells benötigt wird. Das Drücken eines Buttons setzt dabei die Variable auf das dem Button entsprechende Geschlecht.
 
 \clearpage
 \section{TakePictureScreen}
@@ -127,7 +127,7 @@ Release-Version der App für iOS nicht getestet werden.
 
 \subsection{Serverkommunikation}
 
-In den Anfangsphase der Entwicklung wurde der Server nur lokal per localhost betrieben. Somit konnte die App nicht mit dem eigenen Smartphone, sondern nur mit dem in Android Studio 
+In der Anfangsphase der Entwicklung wurde der Server nur lokal per localhost betrieben. Somit konnte die App nicht mit dem eigenen Smartphone, sondern nur mit dem in Android Studio 
 enthaltenen Emulator betrieben werden. Dieser hat keinen Zugriff auf die normalerweise durch den localhost bereitgestellten Adressen. Android Studio umgeht dieses Problem, indem 
 localhost über eine andere Schnittstelle angesprochen werden kann. Die neue Adresse, über welche die Kommunikation zum localhost möglich ist, muss allerdings zuerst herausgefunden werden.
 
@@ -139,12 +139,12 @@ Um dies zu umgehen wird der String am Anfang und Ende gekürzt und somit alle ü
 Zu Beginn war der Server über eine http-Adresse erreichbar. Ab Android 9 werden allerdings jegliche Kommunikationsversuche mit einer unverschlüsselten (http) Adresse standardmäßig 
 blockiert. Somit konnten keine Daten gesendet oder empfangen werden. \newline
 In den Settings-Dateien von Android lässt sich die Kommunikation mit unverschlüsselten Adressen aktivieren. Dies ist auch im Hinblick auf Model Viewer sinnvoll, da das Plugin einen 
-http-Server erstellt. Das rendern der Modelle wäre somit ohne die Aktivierung der unverschlüsselten Kommunikation nicht möglich. \newline
+http-Server erstellt. Das Rendern der Modelle wäre somit ohne die Aktivierung der unverschlüsselten Kommunikation nicht möglich. \newline
 Zusätzlich wurde dem Server ein Zertifikat hinzugefügt, mit welchem das Betreiben eines https-Servers möglich ist.
 
 \subsection{Model Viewer}
 
-Model Viewer benutzt den Browser, um die 3D-Modelle zu ladden und anzuzeigen. Das Plugin unterstützt dabei aber nur die zwei aktuellsten Versionen der bekannten Browser 
+Model Viewer benutzt den Browser, um die 3D-Modelle zu laden und anzuzeigen. Das Plugin unterstützt dabei aber nur die zwei aktuellsten Versionen der bekannten Browser 
 (Chrome, Edge, Firefox, Safari, \dots). Der von Android Studio bereitgestellte Emulator hat Chrome installiert, davon aber die Version 83. Die aktuelle Version von Chrome ist allerdings 
 91. Die auf dem Emulator verfügbare Version ist somit nicht von Model Viewer unterstützt. Auf dem Emulator ist kein Play Store vorhanden. Somit kann die Version von Chrome auch nicht 
 aktualisiert werden. Wird versucht ein 3D-Modell anzuzeigen, so erscheint nur ein weißer Bildschirm. \newline

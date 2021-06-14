@@ -20,7 +20,7 @@ für die Form und dem Pose-Parameter $\boldsymbol{\Theta}$ für die Pose, beschr
 
 \subsection{Shape}
 
-Einer der beiden Parameter für die Generierung des Modells eines menschlichen Kröpers mit STAR ist der sogenannte Shape-Parameter.
+Einer der beiden Parameter für die Generierung des Modells eines menschlichen Körpers mit STAR ist der sogenannte Shape-Parameter.
 Dieser umfasst 10 bis 300 Skalare \linebreak ${\boldsymbol{\beta}= \irow{\beta _0 \ ,\ \ldots \ , \ \beta_{|\beta|}}}$, welche die
 Form des menschlichen Körpers widerspiegeln. Jedes Skalar erwirkt bei der Modellgenerierung eine
 Veränderung eines bestimmten Merkmals. Das Skalar $\beta _0$ ist dabei beispielsweise ausschlaggebend
@@ -36,7 +36,7 @@ $\beta _3$ die Brustbreite sowie Nackenhöhe.
   \label{fig:betas}
 \end{figure}
 
-Ein negativer Wert für ein Skalar reduziert dabei das
+Ein negativer Wert für einen Skalar reduziert dabei das
 entsprechende Merkmal, ein positiver Wert verstärkt dieses (vgl. Abb. \ref{fig:betas}). Je höher dabei die Anzahl an Skalaren,
 desto genauer lässt sich das Modell an einen bestimmten Körperbau anpassen, im Gegenzug
 erhöht sich aber der Rechenaufwand.
@@ -63,7 +63,7 @@ zusammengefasst werden. (vgl. Abb. \ref{fig:axisangle}, (a)).
 
 \newpage
 Dabei gilt, je kleiner der Wert eines Skalars gegenüber den anderen beiden Skalaren, desto geringer
-ist die Drehung entlang der entsprechenden X-Achse, Y-Achse oder Z-Achse. Ein Drehung um $\frac{\pi}{2}$ um die
+ist die Drehung entlang der entsprechenden X-Achse, Y-Achse oder Z-Achse. Eine Drehung um $\frac{\pi}{2}$ um die
 X-Achse und $\frac{\pi}{2}$ um die Y-Achse entspräche $\irow{0.89*\frac{\pi}{2} \ ,\ 0.45* \frac{\pi}{2} \ ,\ 0}$ in 
 Axis-Angle-Darstellung. Durch verschiedene Gewichtungen der 24 Vektoren kann so jede erdenkliche Pose
 dargestellt werden (vgl. Abb. \ref{fig:poses}, (b)). Sind die Elemente eines Vektors $\vec{\Theta _n} = \irow{0 \ , \ 0 \ ,\ 0}$, befindet sich das Gelenk in Ruheposition.
@@ -92,7 +92,7 @@ das die mit den Shape-Koeffizienten definierten physikalischen Attribute und die
 
 Der menschliche Körper verformt sich in unterschiedlichen Posen anders, was für ein realistisches Ergebnis in Betracht
 gezogen werden muss. Diese Verformung ist zudem abhängig von der Form des Körpers. Der zweite Schritt dient dementsprechend der
-Berechnung der durch die Pose $\Theta$ verursachten Verformungen in Korelation mit den Shape-Koeffizienten $\beta$ durch die Funktion
+Berechnung der durch die Pose $\Theta$ verursachten Verformungen in Korrelation mit den Shape-Koeffizienten $\beta$ durch die Funktion
 $B_p(\vec{q},\beta _1) $. Der Parameter $\vec{q}$ stellt dabei den kinematischen Baum als Quaternion mit je vier
 Parametern pro Skelettpunkt dar. $\beta _1$, also der
 zweite Koeffizient des Shape-Parameters, ist repräsentativ für die allgemeine Form des Körpers und stimmt in vielen
@@ -119,10 +119,10 @@ menschlichen Körpers ist realistisch und weicht bei richtiger Messung und Param
 Millimeter ab. Ziel des folgenden Kapitels ist die Entwicklung einer Funktionalität, welche die Rückgabewerte der
 Messfunktion als Eingangsparameter für die Erstellung eines Modells mit STAR nutzbar macht.
 
-\section{Verarbeiung}
+\section{Verarbeitung}
 
 Um mittels Star ein realistisches Modell des menschlichen Körpers zu generieren, müssen die Rückgabewerte der
-Measure-Funktion zu Shape-Parameter $v{\beta}$ und Pose-Parameter $\boldsymbol{\Theta}$ konvertiert werden. Im folgenden wird die Idee der Konvertierung, die Umsetzung sowie aufgetretene
+Measure-Funktion zu Shape-Parameter $v{\beta}$ und Pose-Parameter $\boldsymbol{\Theta}$ konvertiert werden. Im Folgenden wird die Idee der Konvertierung, die Umsetzung sowie aufgetretene
 Probleme dargestellt.
 
 \subsection{Idee}
@@ -133,7 +133,7 @@ Punktes, erfasst. Dadurch lässt sich eine dreidimensionale Punktewolke erzeugen
 Messpunktes auf dem Zozosuit mit der ID ermitteln.
 
 Die Pose kann so durch Zuweisung von passenden Punkten des Zozosuits zu den Gelenkpunkten des
-Pose-Parameters rekonstruiert werden. Hierfür ist es erforderlich, die Rotation In
+Pose-Parameters rekonstruiert werden. Hierfür ist es erforderlich, die Rotation in
 Axis-Angle-Darstellung zu berechnen, welche den Vektor zwischen zwei Gelenkpunkten des kinematischen Baums der Ruhepose zu dem 
 Vektor zwischen den zwei entsprechenden Punkten auf dem Zozosuit rotiert.
 
@@ -153,7 +153,7 @@ Messpunkten auf dem Zozosuit ermittelt.
 \begin{figure}[H]
   \centering 
    \subfigure[Erfasste Punkte]{\includegraphics[width=0.3\textwidth]{point_positions}}\qquad 
-   \subfigure[Numerierte Joints des STAR-Modells \cite{STAR:2020}]{\includegraphics[width=0.6\textwidth]{star_kinematic_tree}}
+   \subfigure[Nummerierte Joints des STAR-Modells \cite{STAR:2020}]{\includegraphics[width=0.6\textwidth]{star_kinematic_tree}}
   \caption{Vergleich von Joints des Star-Modells und Punkten des Zozosuits mit IDs in Gelb} 
   \label{fig:pointpos}
 \end{figure}
@@ -178,14 +178,14 @@ $\vec{v}_{src}$ zu einem Vektor $\vec{v}_{dst}$ in Axis-Angle-Darstellung mit
 
 berechnen. Nachdem dies für alle Gelenke berechnet wird, lässt sich mit Hilfe von Star ein Modell generieren, welches
 die Pose der Person auf dem Bild widerspiegelt. Allerdings treten dabei einige Probleme auf, die das Ergebnis
-stark verzerren können, welche im folgenden vorgestellt werden.
+stark verzerren können, welche im Folgenden vorgestellt werden.
 
 \subsection{Probleme}
 \label{subsec:probleme}
 Bei der Synthese der Pose aus den Messpunkten des Zozosuit treten eine Reihe von Problemen auf.
 
 \subsubsection*{Fehlende Messpunkte an Gelenken}
-Eine Problem ist, dass nicht für jedes Gelenk ein Messpunkt auf dem Zozosuit existiert. Einige
+Ein Problem ist, dass nicht für jedes Gelenk ein Messpunkt auf dem Zozosuit existiert. Einige
 Gelenke müssen deshalb komplett ausgelassen werden, wie beispielsweise jene an Kopf, Füßen und Händen, da kein Messpunkt in der
 Nähe existiert. Diese sind für die gesamte Pose aber nicht ausschlaggebend. Deshalb wird für diese die Ruhepose des Gelenkes
 $\boldsymbol{\Theta}=\irow{0 \ , \ 0 \ ,\ 0}$ verwendet. Bei anderen Gelenken, vor allem in der Schulterregion liegen die Messpunkte
@@ -208,7 +208,7 @@ Bei der Erkennung der Messpunkte mit der Zozosuit-Messfunktion werden häufig Pu
 ID erkannt. Die dadurch entstehende lückenhafte dreidimensionale Punktewolke der Messpose hat zur Folge, dass
 nicht alle Pose-Parameter berechenbar sind. Jeder fehlende Messpunkt, mit Ausnahme der Start- und Endpunkte, 
 verursacht zwei fehlende Pose-Parameter, die zur Ruhepose des Gelenks gesetzt werden müssen. Dadurch kommt es teils
-zu einer Pose des Modells, die einigen essentiellen Aspekten gar nicht mit der Pose des Menschen auf dem Bild übereinstimmt.
+zu einer Pose des Modells, die einigen essenziellen Aspekten gar nicht mit der Pose des Menschen auf dem Bild übereinstimmt.
 So kann eine fehlerhafte Erkennung des Messpunktes für ein Schultergelenk dazu führen, dass der Arm des Modells 
 waagerecht (Ruhepose) steht, und nicht wie auf dem Bild dargestellt.
 Wird versucht, Gelenke mit mehreren Messpunkten zu beschreiben, steigt dabei 
@@ -231,5 +231,5 @@ Gelenk zugewiesen, kann dies gravierende Folgen für das generierte Modell haben
 mit der falschen ID kann das Gelenkt stark verdreht werden, was eine groteske Darstellung des Gelenks im Modell
 zur Folge hat. Das Modell zeigt dadurch teilweise einen in Teilen deformierten menschlichen Körper,
 beispielsweise mit einem grotesk verdrehten und abstehendem Bein, was bei den vorgenannten Problemen nicht auftreten kann.
-Bei jenen wird zwar die Pose oft nicht richtig widergespiegelt, allerdings verkörpert die gezeigt Pose im Modell eine
+Bei jenen wird zwar die Pose oft nicht richtig widergespiegelt, allerdings verkörpert die gezeigte Pose im Modell eine
 reale, nachstellbare Pose.
